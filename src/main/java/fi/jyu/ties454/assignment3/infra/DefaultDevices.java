@@ -1,10 +1,7 @@
 package fi.jyu.ties454.assignment3.infra;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.Optional;
+import java.util.Random;
 
 import fi.jyu.ties454.assignment3.actuators.BackwardMover;
 import fi.jyu.ties454.assignment3.actuators.Cleaner;
@@ -17,187 +14,41 @@ import fi.jyu.ties454.assignment3.sensors.WallSensor;
 
 /**
  * Class containing the actual implementation of actuators
- * 
+ *
  * @author michael
  *
  */
 public class DefaultDevices {
 
-	private static final int basicDirtSensorCost = 500;
-	private static final int basicWallSensorCost = 500;
-	private static final int basicDirtierCost = 0;
-	private static final int basicCleanerCost = 0;
-	private static final int basicRotatorCost = 0;
-	private static final int basicBackwardMovercost = 500;
-	private static final int basicForwardMoverCost = 0;
-	
-	private static long factor = 50;
-	private static long basicMoveTime = factor * 5;
-	private static long basicCleanTime = factor * 5;
-	private static long basicSoilTime = basicCleanTime * 10;
-	private static long basicRotateTime = factor * 1;
-	private static long basicWallSenseTime = factor * 1;
-	private static long basicDirtSenseTime = factor * 1;
+	/**
+	 * This cleaner is a prototype to be used on the next missions to Mars.
+	 * Cleans the area under the robot and all dirt within the 5x5 square around
+	 * the robot. (even cleans trough walls!)
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = areaCleanerCost)
+	public static class AreaCleaner extends Device implements Cleaner {
 
-	private static int basicWallSensorDepth = 1;
-
-
-
-	@Device.AvailableDevice(cost=basicDirtSensorCost)
-	public static class BasicDirtSensor extends Device implements DirtSensor {
-
-		BasicDirtSensor(Floor map, AgentState state) {
+		AreaCleaner(Floor map, AgentState state) {
 			super(map, state);
-		}
-
-		@Override
-		public FloorState inspect() {
-			sleep(basicDirtSenseTime);
-			return map.state(state.l);
-		}
-
-		@Override
-		public Optional<Boolean> inspectInFront() {
-			return Optional.empty();
 		}
 
 		@Override
 		public void attach(GameAgent agent) {
 			agent.update(this);
-		}
-
-	}
-
-	@Device.AvailableDevice(cost=basicWallSensorCost)
-	public static class BasicWallSensor extends WallSensorImpl implements WallSensor {
-
-		BasicWallSensor(Floor map, AgentState state) {
-			super(map, state, basicWallSensorDepth);
-		}
-
-		@Override
-		public int canContinueAtLeast() {
-			sleep(basicWallSenseTime);
-			return super.canContinueAtLeast();
-		}
-	}
-
-	static class WallSensorImpl extends Device implements WallSensor {
-
-		private final int depth;
-
-		WallSensorImpl(Floor map, AgentState state, int visionDist) {
-			super(map, state);
-			this.depth = visionDist;
-		}
-
-		@Override
-		public int canContinueAtLeast() {
-			Location newLocation = state.l;
-			Orientation orientation = state.o;
-
-			int steps = 0;
-			for (; steps < depth; steps++) {
-				Location potentialNewLocation = newLocation.oneStep(orientation);
-				if (!map.validLocation(potentialNewLocation)) {
-					break;
-				}
-				newLocation = potentialNewLocation;
-			}
-			return steps;
-		}
-
-		@Override
-		public int visionDistance() {
-			return depth;
-		}
-
-		@Override
-		public void attach(GameAgent agent) {
-			agent.update(this);
-		}
-	}
-
-	@Device.AvailableDevice(cost=basicDirtierCost)
-	public static class BasicDirtier extends Device implements Dirtier {
-
-		BasicDirtier(Floor map, AgentState state) {
-			super(map, state);
-		}
-
-		@Override
-		public void makeMess() {
-			sleep(basicSoilTime);
-			map.soil(state.l);
-		}
-
-		@Override
-		public void attach(GameAgent agent) {
-			agent.update(this);
-		}
-
-	}
-
-	@Device.AvailableDevice(cost=basicCleanerCost)
-	public static class BasicCleaner extends Device implements Cleaner {
-
-		BasicCleaner(Floor map, AgentState state) {
-			super(map, state);
 		}
 
 		@Override
 		public void clean() {
-			sleep(basicCleanTime);
-			map.clean(state.l);
-		}
-
-		@Override
-		public void attach(GameAgent agent) {
-			agent.update(this);
+			DefaultDevices.sleep(DefaultDevices.areaCleanTime);
+			this.map.clean(this.state.getLocation());
 		}
 
 	}
 
-	@Device.AvailableDevice(cost=basicRotatorCost)
-	public static class BasicRotator extends Device implements Rotator {
-
-		BasicRotator(Floor map, AgentState state) {
-			super(map, state);
-		}
-
-		@Override
-		public void rotateCW() {
-			sleep(basicRotateTime);
-			this.state.o = this.state.o.cw();
-		}
-
-		@Override
-		public void rotateCCW() {
-			sleep(basicRotateTime);
-			this.state.o = this.state.o.ccw();
-		}
-
-		@Override
-		public void attach(GameAgent agent) {
-			agent.update(this);
-		}
-
-	}
-
-	@Device.AvailableDevice(cost=basicBackwardMovercost)
-	public static class BasicBackwardMover extends BackwardMoverImpl {
-		BasicBackwardMover(Floor floor, AgentState state) {
-			super(floor, state, 1);
-		}
-
-		@Override
-		public int move() {
-			sleep(basicMoveTime);
-			return super.move();
-		}
-	}
-
-	static class BackwardMoverImpl extends MoverImpl implements BackwardMover {
+	private static class BackwardMoverImpl extends MoverImpl implements BackwardMover {
 		public BackwardMoverImpl(Floor floor, AgentState state, int maxMoveSize) {
 			super(floor, state, maxMoveSize, true);
 		}
@@ -208,7 +59,125 @@ public class DefaultDevices {
 		}
 	}
 
-	@Device.AvailableDevice(cost=basicForwardMoverCost)
+	/**
+	 * Move the robot backwards one step.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicBackwardMovercost)
+	public static class BasicBackwardMover extends BackwardMoverImpl {
+		BasicBackwardMover(Floor floor, AgentState state) {
+			super(floor, state, 1);
+		}
+
+		@Override
+		public int move() {
+			DefaultDevices.sleep(DefaultDevices.basicMoveTime);
+			return super.move();
+		}
+	}
+
+	/**
+	 * Cleans the area under the robot.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicCleanerCost)
+	public static class BasicCleaner extends Device implements Cleaner {
+
+		BasicCleaner(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void clean() {
+			DefaultDevices.sleep(DefaultDevices.basicCleanTime);
+			this.map.clean(this.state.getLocation());
+		}
+
+	}
+
+	/**
+	 * Soils the area under the robot. Can be used 20 times.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicDirtierCost)
+	public static class BasicDirtier extends Device implements Dirtier {
+
+		private static final int maxUse = 20;
+		private int uses = 0;
+
+		BasicDirtier(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void makeMess() {
+			if (!this.isEmpty()) {
+				DefaultDevices.sleep(DefaultDevices.basicDirtierTime);
+				this.map.soil(this.state.getLocation());
+				this.uses++;
+			}
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.uses == BasicDirtier.maxUse;
+		}
+
+	}
+
+	/**
+	 * Checks for dirt under the robot
+	 *
+	 * @author michael
+	 */
+	@Device.AvailableDevice(cost = basicDirtSensorCost)
+	public static class BasicDirtSensor extends Device implements DirtSensor {
+
+		BasicDirtSensor(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public Optional<Boolean> dirtInFront() {
+			return Optional.empty();
+		}
+
+		@Override
+		public FloorState inspect() {
+			DefaultDevices.sleep(DefaultDevices.basicDirtSenseTime);
+			return this.map.state(this.state.getLocation());
+		}
+
+	}
+
+	/**
+	 * Move the robot forward one step.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicForwardMoverCost)
 	public static class BasicForwardMover extends ForwardMoverImpl {
 		BasicForwardMover(Floor floor, AgentState state) {
 			super(floor, state, 1);
@@ -216,23 +185,350 @@ public class DefaultDevices {
 
 		@Override
 		public int move() {
-			sleep(basicMoveTime);
+			DefaultDevices.sleep(DefaultDevices.basicMoveTime);
 			return super.move();
 		}
 	}
 
-	static class ForwardMoverImpl extends MoverImpl implements ForwardMover {
+	/**
+	 * Rotates the robot
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicRotatorCost)
+	public static class BasicRotator extends Device implements Rotator {
+
+		BasicRotator(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void rotateCCW() {
+			DefaultDevices.sleep(DefaultDevices.basicRotateTime);
+			this.state.setOrientation(this.state.getOrientation().ccw());
+		}
+
+		@Override
+		public void rotateCW() {
+			DefaultDevices.sleep(DefaultDevices.basicRotateTime);
+			this.state.setOrientation(this.state.getOrientation().cw());
+		}
+
+	}
+
+	/**
+	 * Checks whether there is a wall right in front of the agent.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicWallSensorCost)
+	public static class BasicWallSensor extends WallSensorImpl implements WallSensor {
+
+		BasicWallSensor(Floor map, AgentState state) {
+			super(map, state, basicWallSensorDepth);
+		}
+
+		@Override
+		public int canContinueAtLeast() {
+			DefaultDevices.sleep(DefaultDevices.basicWallSenseTime);
+			return super.canContinueAtLeast();
+		}
+	}
+
+	/**
+	 * Creates the ultimate mess. Spreads dirt all around the robot.
+	 * Unfortunately the dirt tank can only be exploded once.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = dirtExplosionCost)
+	public static class DirtExplosion extends Device implements Dirtier {
+
+		boolean used = false;
+
+		DirtExplosion(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void makeMess() {
+			if (!this.used) {
+				DefaultDevices.sleep(DefaultDevices.dirtExplosionTime);
+				// make dirty: perform 50 random walks of length 20, drop off
+				int numberOfWalks = 50;
+				int walkLength = 20;
+				Location initialLocation = this.state.getLocation();
+				Random r = new Random();
+				for (int i = 0; i < numberOfWalks; i++) {
+					Location currentLocation = initialLocation;
+					for (int step = 0; step < walkLength; step++) {
+						Location potentialNext = currentLocation.oneStep(Orientation.random(r));
+						if (this.map.isValidLocation(potentialNext)) {
+							currentLocation = potentialNext;
+						}
+					}
+					this.map.soil(currentLocation);
+				}
+				this.used = true;
+			}
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.used;
+		}
+
+	}
+
+	private static class ForwardMoverImpl extends MoverImpl implements ForwardMover {
 		ForwardMoverImpl(Floor floor, AgentState state, int maxMoveSize) {
 			super(floor, state, maxMoveSize, false);
 		}
-		
+
 		@Override
 		public void attach(GameAgent agent) {
 			agent.update(this);
 		}
 	}
 
-	static abstract class MoverImpl extends Device {
+	/**
+	 * Move the robot forward up to 1000 steps. First commercialization of a
+	 * hybrid device. The genes of a frog were injected into a grasshopper whose
+	 * legs are replaced by a kevlar frame.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = frogForwardMoverCost)
+	public static class FrogHopperForwardMover extends ForwardMoverImpl {
+		FrogHopperForwardMover(Floor floor, AgentState state) {
+			super(floor, state, 1000);
+		}
+
+		@Override
+		public int move() {
+			DefaultDevices.sleep(DefaultDevices.frogMoveTime);
+			return super.move();
+		}
+	}
+
+	/**
+	 * Checks whether there is dirt under the robot. The sensor makes one sided
+	 * errors 20% of the time. If the sensor tells that the area is clean, it is
+	 * clean. If the sensor tells the area is dirty, it might have been clean
+	 * with low probability.
+	 */
+	@Device.AvailableDevice(cost = highProbDirtSensorCost)
+	public static class HighProbabilisticDirtSensor extends Device implements DirtSensor {
+
+		private final Random r;
+
+		HighProbabilisticDirtSensor(Floor map, AgentState state) {
+			super(map, state);
+			this.r = new Random();
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public Optional<Boolean> dirtInFront() {
+			return Optional.empty();
+		}
+
+		@Override
+		public FloorState inspect() {
+			DefaultDevices.sleep(DefaultDevices.highProbDirtSenseTime);
+			FloorState realState = this.map.state(this.state.getLocation());
+			if ((realState == FloorState.CLEAN) && (this.r.nextInt(20) == 0)) {
+				return FloorState.DIRTY;
+			}
+			return realState;
+		}
+
+	}
+
+	/**
+	 * Rotates the robot in no time (really)
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = jackieChanRotatorCost)
+	public static class JackieChanRotator extends Device implements Rotator {
+
+		JackieChanRotator(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void rotateCCW() {
+			DefaultDevices.sleep(DefaultDevices.jackieChanRotateTime);
+			this.state.setOrientation(this.state.getOrientation().ccw());
+		}
+
+		@Override
+		public void rotateCW() {
+			DefaultDevices.sleep(DefaultDevices.jackieChanRotateTime);
+			this.state.setOrientation(this.state.getOrientation().cw());
+		}
+
+	}
+
+	/**
+	 * Move the robot forward up to 5 steps.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = jumpForwardMoverCost)
+	public static class JumpForwardMover extends ForwardMoverImpl {
+		JumpForwardMover(Floor floor, AgentState state) {
+			super(floor, state, 5);
+		}
+
+		@Override
+		public int move() {
+			DefaultDevices.sleep(DefaultDevices.jumpForwardMoveTime);
+			return super.move();
+		}
+	}
+
+	/**
+	 * The Ferrari among dirt sensors. Besides vary fast checking of dirt under
+	 * the robot, it is able to measure dirt anywhere in front of the robot.
+	 * Uses some sort of laser technique which was developed for a classified
+	 * NASA project.
+	 *
+	 * If there is dirt under the robot or anywhere in front of the robot, the
+	 * sensor will be able to tell. However, the sensor cannot tell exactly how
+	 * far in front the dirt is.
+	 *
+	 * @author michael
+	 */
+	@Device.AvailableDevice(cost = laserDirtSensorCost)
+	public static class LaserDirtSensor extends Device implements DirtSensor {
+
+		LaserDirtSensor(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public Optional<Boolean> dirtInFront() {
+			DefaultDevices.sleep(DefaultDevices.laserDirtInFrontSensorTime);
+			Location newLocation = this.state.getLocation();
+			Orientation orientation = this.state.getOrientation();
+
+			while (this.map.isValidLocation(newLocation)) {
+				Location potentialNewLocation = newLocation.oneStep(orientation);
+				if (this.map.isDirty(potentialNewLocation)) {
+					return Optional.of(true);
+				}
+				newLocation = potentialNewLocation;
+			}
+			return Optional.of(false);
+		}
+
+		@Override
+		public FloorState inspect() {
+			DefaultDevices.sleep(DefaultDevices.laserDirtSenseTime);
+			return this.map.state(this.state.getLocation());
+		}
+
+	}
+
+	/**
+	 * Getting seasick of rotating all the time? Use this sneaky
+	 * {@link ForwardMover} which actually moves you sideways to the left.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = basicSidewaysMoverCost)
+	static abstract class LeftMover extends Device implements ForwardMover {
+
+		LeftMover(Floor map, AgentState state) {
+			super(map, state);
+		}
+
+		@Override
+		public int move() {
+			DefaultDevices.sleep(DefaultDevices.basicSideWaysMovetime);
+			Location newLocation = this.state.getLocation();
+			Orientation orientation = this.state.getOrientation().ccw();
+
+			Location potentialNewLocation = newLocation.oneStep(orientation);
+			if (!this.map.isValidLocation(potentialNewLocation)) {
+				return 0;
+			}
+			this.state.setLocation(potentialNewLocation);
+			return 1;
+		}
+	}
+
+	/**
+	 * Checks whether there is dirt under the robot. The sensor makes two sided
+	 * errors 25% of the time. Measuring multiple times increases the confidence
+	 * when using this sensor.
+	 */
+	@Device.AvailableDevice(cost = lowProbDirtSensorCost)
+	public static class LowProbabilisticDirtSensor extends Device implements DirtSensor {
+
+		private final Random r;
+
+		LowProbabilisticDirtSensor(Floor map, AgentState state) {
+			super(map, state);
+			this.r = new Random();
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public Optional<Boolean> dirtInFront() {
+			return Optional.empty();
+		}
+
+		@Override
+		public FloorState inspect() {
+			DefaultDevices.sleep(DefaultDevices.lowProbDirtSenseTime);
+			FloorState realState = this.map.state(this.state.getLocation());
+			if (this.r.nextInt(4) == 0) {
+				return realState.invert();
+			}
+			return realState;
+		}
+
+	}
+
+	private static abstract class MoverImpl extends Device {
 
 		private final int maxMove;
 		private final boolean reverse;
@@ -244,22 +540,122 @@ public class DefaultDevices {
 		}
 
 		public int move() {
-			Location newLocation = state.l;
-			Orientation orientation = this.reverse ? state.o.oposite() : state.o;
+			Location newLocation = this.state.getLocation();
+			Orientation orientation = this.reverse ? this.state.getOrientation().oposite()
+					: this.state.getOrientation();
 
 			int steps = 0;
-			for (; steps < maxMove; steps++) {
+			for (; steps < this.maxMove; steps++) {
 				Location potentialNewLocation = newLocation.oneStep(orientation);
-				if (!map.validLocation(potentialNewLocation)) {
+				if (!this.map.isValidLocation(potentialNewLocation)) {
 					break;
 				}
 				newLocation = potentialNewLocation;
 			}
-			state.l = newLocation;
+			this.state.setLocation(newLocation);
 			return steps;
 		}
 
 	}
+
+	private static class WallSensorImpl extends Device implements WallSensor {
+
+		private final int depth;
+
+		WallSensorImpl(Floor map, AgentState state, int visionDist) {
+			super(map, state);
+			this.depth = visionDist;
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public int canContinueAtLeast() {
+			Location newLocation = this.state.getLocation();
+			Orientation orientation = this.state.getOrientation();
+
+			int steps = 0;
+			for (; steps < this.depth; steps++) {
+				Location potentialNewLocation = newLocation.oneStep(orientation);
+				if (!this.map.isValidLocation(potentialNewLocation)) {
+					break;
+				}
+				newLocation = potentialNewLocation;
+			}
+			return steps;
+		}
+
+		@Override
+		public int visionDistance() {
+			return this.depth;
+		}
+	}
+
+	private static final int timeFactor = 50;
+	private static final int costFactor = Manager.initialBudget / 100;
+
+	private static final int free = 0;
+	private static final int cheap = costFactor * 5;
+	private static final int middle = costFactor * 15;
+	private static final int expensive = costFactor * 30;
+
+	private static final int slooow = timeFactor * 100;
+	private static final int slow = timeFactor * 25;
+	private static final int normalSpeed = timeFactor * 10;
+	private static final int fast = timeFactor * 5;
+	private static final int instant = 0;
+
+	private static final int areaCleanerCost = expensive;
+	private static final int areaCleanTime = normalSpeed;
+
+	private static final int basicBackwardMovercost = cheap;
+
+	private static final int basicCleanerCost = free;
+	private static final int basicCleanTime = normalSpeed;
+
+	private static final int basicDirtierCost = free;
+	private static final int basicDirtierTime = slooow;
+
+	private static final int basicDirtSenseTime = normalSpeed;
+	private static final int basicDirtSensorCost = cheap;
+
+	private static final int basicForwardMoverCost = free;
+	private static final int basicMoveTime = slow;
+
+	private static final int basicRotateTime = normalSpeed;
+	private static final int basicRotatorCost = free;
+
+	private static final int basicSidewaysMoverCost = middle;
+	private static final int basicSideWaysMovetime = basicMoveTime;
+
+	private static final int basicWallSenseTime = fast;
+	private static final int basicWallSensorCost = middle;
+	private static final int basicWallSensorDepth = 1;
+
+	private static final int dirtExplosionCost = middle;
+	private static final int dirtExplosionTime = instant;
+
+	private static final int frogForwardMoverCost = expensive;
+	private static final int frogMoveTime = instant;
+
+	private static final int highProbDirtSenseTime = instant;
+	private static final int highProbDirtSensorCost = expensive;
+
+	private static final int jackieChanRotateTime = instant;
+	private static final int jackieChanRotatorCost = middle;
+
+	private static final int jumpForwardMoverCost = middle;
+	private static final long jumpForwardMoveTime = fast;
+
+	private static final int laserDirtInFrontSensorTime = fast;
+	private static final int laserDirtSenseTime = instant;
+	private static final int laserDirtSensorCost = expensive;
+
+	private static final int lowProbDirtSenseTime = fast;
+	private static final int lowProbDirtSensorCost = middle;
 
 	private static void sleep(long millis) {
 		try {

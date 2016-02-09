@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 import fi.jyu.ties454.assignment3.agent.GameAgent;
 
 public abstract class Device {
-	
+
 	/**
 	 * This annotation indicates that the given device should be made available
 	 * to the agent for the given price.
-	 * 
+	 *
 	 * @author michael
 	 *
 	 */
@@ -21,7 +21,7 @@ public abstract class Device {
 	public @interface AvailableDevice {
 		int cost();
 	}
-	
+
 	protected final Floor map;
 	protected final AgentState state;
 

@@ -6,7 +6,7 @@ public enum Orientation {
 	N, E, S, W;
 
 	public static Orientation random(Random r) {
-		return values()[r.nextInt(values().length)];
+		return Orientation.values()[r.nextInt(Orientation.values().length)];
 	}
 
 	public Orientation oposite() {

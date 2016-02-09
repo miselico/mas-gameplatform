@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Observer;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -29,10 +28,10 @@ import com.google.common.collect.TreeBasedTable;
 public class Floor {
 
 	interface FloorUpdateListener {
-		void update(String newState);
+		void update();
 	}
 
-	private List<FloorUpdateListener> listeners = new LinkedList<>();
+	private final List<FloorUpdateListener> listeners = new LinkedList<>();
 
 	public void addListener(FloorUpdateListener l) {
 		this.listeners.add(l);
@@ -40,8 +39,7 @@ public class Floor {
 	}
 
 	private void fireUpdate() {
-		String newState = this.toString();
-		this.listeners.forEach(l -> l.update(newState));
+		this.listeners.forEach(l -> l.update());
 	}
 
 	/**
@@ -56,38 +54,47 @@ public class Floor {
 
 	/**
 	 * Get a random location.
-	 * 
+	 *
 	 * @param r
 	 * @return
 	 */
 	Location getRandomLocation(Random r) {
-		Cell<Integer, Integer, FloorState> cell = Iterables.get(map.cellSet(), r.nextInt((map.cellSet().size())));
-		return new Location(cell.getRowKey(), cell.getColumnKey());
+		Cell<Integer, Integer, FloorState> cell = Iterables.get(this.map.cellSet(),
+				r.nextInt((this.map.cellSet().size())));
+		Location l = new Location(cell.getColumnKey(), cell.getRowKey());
+		if (!this.isValidLocation(l)) {
+			throw new Error("Randomly chose location must be valid");
+		}
+		return l;
 	}
 
-	public boolean validLocation(Location potentialNewLocation) {
-		return map.contains(potentialNewLocation.Y, potentialNewLocation.X);
+	public boolean isValidLocation(Location potentialNewLocation) {
+		return this.map.contains(potentialNewLocation.Y, potentialNewLocation.X);
 	}
 
 	synchronized public void clean(Location l) {
-		Preconditions.checkArgument(validLocation(l));
-		if (state(l) != FloorState.CLEAN) {
-			map.put(l.Y, l.X, FloorState.CLEAN);
+		Preconditions.checkArgument(this.isValidLocation(l));
+		if (this.state(l) != FloorState.CLEAN) {
+			this.map.put(l.Y, l.X, FloorState.CLEAN);
 			this.fireUpdate();
 		}
 	}
 
 	synchronized public void soil(Location l) {
-		Preconditions.checkArgument(validLocation(l));
-		if (state(l) != FloorState.DIRTY) {
-			map.put(l.Y, l.X, FloorState.DIRTY);
+		Preconditions.checkArgument(this.isValidLocation(l));
+		if (this.state(l) != FloorState.DIRTY) {
+			this.map.put(l.Y, l.X, FloorState.DIRTY);
 			this.fireUpdate();
 		}
 	}
 
 	synchronized public FloorState state(Location l) {
-		Preconditions.checkArgument(validLocation(l));
-		return map.get(l.Y, l.X);
+		Preconditions.checkArgument(this.isValidLocation(l));
+		return this.map.get(l.Y, l.X);
+	}
+
+	public boolean isDirty(Location l) {
+		return this.state(l) == FloorState.DIRTY;
 	}
 
 	public static Floor createSimple() {
@@ -101,7 +108,7 @@ public class Floor {
 	}
 
 	private static final char CLEANCHAR = 'C';
-	private static final char DIRTYCHAR = 'D';
+	private static final char DIRTYCHAR = '#';
 	private static final char VOIDCHAR = ' ';
 
 	void writeToWriter(Writer r) throws IOException {
@@ -115,13 +122,13 @@ public class Floor {
 			int x = 0;
 			for (Entry<Integer, FloorState> column : row.getValue().entrySet()) {
 				while (column.getKey() != x) {
-					r.write(VOIDCHAR);
+					r.write(Floor.VOIDCHAR);
 					x++;
 				}
 				if (column.getValue() == FloorState.CLEAN) {
-					r.write(CLEANCHAR);
+					r.write(Floor.CLEANCHAR);
 				} else if (column.getValue() == FloorState.DIRTY) {
-					r.write(DIRTYCHAR);
+					r.write(Floor.DIRTYCHAR);
 				} else {
 					throw new Error();
 				}
@@ -134,7 +141,7 @@ public class Floor {
 	public void writeToFile(File descriptor) throws FileNotFoundException, IOException {
 		try (BufferedWriter r = new BufferedWriter(
 				new OutputStreamWriter(new FileOutputStream(descriptor), StandardCharsets.UTF_8))) {
-			writeToWriter(r);
+			this.writeToWriter(r);
 		}
 	}
 
@@ -173,7 +180,7 @@ public class Floor {
 	public static Floor readFromFile(File descriptor) throws FileNotFoundException, IOException {
 		try (BufferedReader r = new BufferedReader(
 				new InputStreamReader(new FileInputStream(descriptor), StandardCharsets.UTF_8))) {
-			return readFromReader(r);
+			return Floor.readFromReader(r);
 		}
 	}
 

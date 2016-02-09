@@ -34,12 +34,13 @@ public class PartsShop {
 					try {
 						cons = deviceClass.getDeclaredConstructor(Floor.class, AgentState.class);
 					} catch (NoSuchMethodException | SecurityException e) {
-						throw new Error(e);
+						throw new Error(
+								"A class annotated with AvailableDevice must have a Floor,AgentState constructor", e);
 					}
 					Part part = new Part(cons, price);
 					b.put(deviceClass.getName(), part);
 				} else {
-					throw new Error("AvailableDevice annotation on someting which is not a " +  Device.class.getName());
+					throw new Error("AvailableDevice annotation on someting which is not a " + Device.class.getName());
 				}
 			}
 		}
@@ -47,21 +48,21 @@ public class PartsShop {
 	}
 
 	public boolean partExists(String part) {
-		return parts.containsKey(part);
+		return this.parts.containsKey(part);
 	}
 
 	public int getPrice(String part) {
-		Preconditions.checkArgument(partExists(part));
-		return parts.get(part).price;
+		Preconditions.checkArgument(this.partExists(part));
+		return this.parts.get(part).price;
 	}
 
 	public void attachPart(String device, Floor map, AgentState state) {
-		Part part = parts.get(device);
+		Part part = this.parts.get(device);
 		try {
 			Device d = part.constructor.newInstance(map, state);
-			//double dispatch
+			// double dispatch
 			d.attach(state.agent);
-			
+
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw new Error(e);
@@ -77,16 +78,17 @@ public class PartsShop {
 			this.constructor = cons;
 			this.price = price;
 		}
-		
+
 		@Override
 		public String toString() {
-			return MoreObjects.toStringHelper(this).add("class", constructor.getDeclaringClass().getName()).add("price", price).toString();
+			return MoreObjects.toStringHelper(this).add("class", this.constructor.getDeclaringClass().getName())
+					.add("price", this.price).toString();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return parts.toString();
+		return this.parts.toString();
 	}
-	
+
 }

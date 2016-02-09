@@ -1,12 +1,32 @@
 package fi.jyu.ties454.assignment3.infra;
 
+import java.util.LinkedList;
+
 import fi.jyu.ties454.assignment3.agent.GameAgent;
-import jade.core.Agent;
 
 class AgentState {
+
+	private final LinkedList<Listener> listeners = new LinkedList<>();
+
+	public interface Listener {
+		default void moved() {
+			this.changed();
+		}
+
+		default void turned() {
+			this.changed();
+		}
+
+		void changed();
+	}
+
+	public void addListener(Listener l) {
+		this.listeners.add(l);
+	}
+
 	final GameAgent agent;
-	Location l;
-	Orientation o;
+	private Location l;
+	private Orientation o;
 
 	public AgentState(GameAgent agent, Location l, Orientation o) {
 		super();
@@ -15,10 +35,32 @@ class AgentState {
 		this.o = o;
 	}
 
-	// private BackwardMover backward;
-	// private ForwardMover forward;
-	// private Cleaner cleaner;
-	// private Rotator rotator;
-	//
-	// private
+	public Location getLocation() {
+		return this.l;
+	}
+
+	public void setLocation(Location l) {
+		if (!this.l.equals(l)) {
+			this.l = l;
+			this.listeners.forEach(li -> li.moved());
+		}
+
+	}
+
+	Orientation getOrientation() {
+		return this.o;
+	}
+
+	void setOrientation(Orientation o) {
+		if (!this.o.equals(o)) {
+			this.o = o;
+			this.listeners.forEach(li -> li.turned());
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "AgentState [agent=" + this.agent.getLocalName() + ", l=" + this.l + ", o=" + this.o + "]";
+	}
+
 }

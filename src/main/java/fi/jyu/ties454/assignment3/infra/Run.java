@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
+import javax.swing.SwingUtilities;
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.leap.Properties;
@@ -18,10 +20,9 @@ public class Run {
 
 		int cleaningGroup = 0;
 		int soilingGroup = 0;
-		 InputStream is = Run.class.getResourceAsStream("map1.txt");
-		 Floor map = Floor.readFromReader(new InputStreamReader(is,
-		 StandardCharsets.UTF_8));
-		//Floor map = Floor.createSimple();
+		InputStream is = Run.class.getResourceAsStream("map3.txt");
+		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+		// Floor map = Floor.createSimple();
 		Random r = new Random(467545L);
 		String partsShopClass = DefaultDevices.class.getName();
 		if (args.length > 0) {
@@ -41,21 +42,24 @@ public class Run {
 		}
 		PartsShop ps = new PartsShop(Class.forName(partsShopClass));
 
-		
-		GUI gui = new GUI();
-		map.addListener(gui);
-		
-		
 		Properties pp = new Properties();
 		pp.setProperty(Profile.GUI, Boolean.TRUE.toString());
 		Profile p = new ProfileImpl(pp);
 		AgentContainer ac = jade.core.Runtime.instance().createMainContainer(p);
-
+		Manager manager = new Manager(cleaningGroup, soilingGroup, map, ps, r);
+		GUI gui = new GUI();
+		manager.addListener(gui);
 		try {
-			ac.acceptNewAgent(Manager.AID.getLocalName(), new Manager(cleaningGroup, soilingGroup, map, ps, r)).start();
+			ac.acceptNewAgent(Manager.AID.getLocalName(), manager).start();
 		} catch (StaleProxyException e) {
 			throw new Error(e);
 		}
-		gui.setVisible(true);
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				gui.setVisible(true);
+			}
+		});
 	}
 }
