@@ -2,13 +2,13 @@ package fi.jyu.ties454.assignment3.group0.cleaning;
 
 import java.util.Random;
 
-import fi.jyu.ties454.assignment3.actuators.Cleaner;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.agent.CleaningAgent;
-import fi.jyu.ties454.assignment3.infra.DefaultDevices;
-import fi.jyu.ties454.assignment3.infra.FloorState;
-import fi.jyu.ties454.assignment3.sensors.DirtSensor;
+import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.FloorState;
+import fi.jyu.ties454.cleaningAgents.sensors.DirtSensor;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class Cleaner2 extends CleaningAgent {

@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
-import fi.jyu.ties454.assignment3.infra.Device.AvailableDevice;
+import fi.jyu.ties454.cleaningAgents.infra.Device.AvailableDevice;
 
 public class PartsShop {
 

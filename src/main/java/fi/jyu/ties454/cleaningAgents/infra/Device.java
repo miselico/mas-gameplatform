@@ -1,11 +1,11 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import fi.jyu.ties454.assignment3.agent.GameAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 
 public abstract class Device {
 

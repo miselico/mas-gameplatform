@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.io.File;
 import java.io.InputStream;
@@ -11,8 +11,8 @@ import java.util.Random;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import fi.jyu.ties454.assignment3.agent.CleaningAgent;
-import fi.jyu.ties454.assignment3.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.leap.Properties;

@@ -1,8 +1,8 @@
-package fi.jyu.ties454.assignment3.sensors;
+package fi.jyu.ties454.cleaningAgents.sensors;
 
 import java.util.Optional;
 
-import fi.jyu.ties454.assignment3.infra.FloorState;
+import fi.jyu.ties454.cleaningAgents.infra.FloorState;
 
 public interface DirtSensor {
 	/**

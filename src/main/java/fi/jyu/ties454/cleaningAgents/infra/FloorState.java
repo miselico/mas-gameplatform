@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 public enum FloorState {
 	CLEAN, DIRTY;

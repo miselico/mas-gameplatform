@@ -2,14 +2,14 @@ package fi.jyu.ties454.assignment3.group0.cleaning;
 
 import java.util.Random;
 
-import fi.jyu.ties454.assignment3.actuators.Cleaner;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.agent.CleaningAgent;
-import fi.jyu.ties454.assignment3.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import jade.core.behaviours.OneShotBehaviour;
 
-public class Cleaner1 extends CleaningAgent {
+public class RichCleaner1 extends CleaningAgent {
 
 	private static final long serialVersionUID = 1L;
 	private ForwardMover f;
@@ -27,22 +27,22 @@ public class Cleaner1 extends CleaningAgent {
 			@Override
 			public void action() {
 				Random rand = new Random();
-				if (Cleaner1.this.getDevice(DefaultDevices.AreaCleaner.class)
-						&& Cleaner1.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
+				if (RichCleaner1.this.getDevice(DefaultDevices.AreaCleaner.class)
+						&& RichCleaner1.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
 					while (true) {
-						Cleaner1.this.jumper.move();
-						Cleaner1.this.areaCleaner.clean();
+						RichCleaner1.this.jumper.move();
+						RichCleaner1.this.areaCleaner.clean();
 						if (rand.nextInt(5) == 0) {
-							Cleaner1.this.r.rotateCW();
+							RichCleaner1.this.r.rotateCW();
 						}
 					}
 				} else {
 					// no money -> use free stuff
 					while (true) {
-						Cleaner1.this.f.move();
-						Cleaner1.this.c.clean();
+						RichCleaner1.this.f.move();
+						RichCleaner1.this.c.clean();
 						if (rand.nextInt(5) == 0) {
-							Cleaner1.this.r.rotateCW();
+							RichCleaner1.this.r.rotateCW();
 						}
 					}
 				}

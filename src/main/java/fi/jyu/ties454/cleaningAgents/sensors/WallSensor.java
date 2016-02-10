@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.sensors;
+package fi.jyu.ties454.cleaningAgents.sensors;
 
 public interface WallSensor {
 	/**

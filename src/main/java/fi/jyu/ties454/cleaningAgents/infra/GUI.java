@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.awt.Font;
 import java.util.Map;
@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import fi.jyu.ties454.assignment3.infra.Manager.Listener;
+import fi.jyu.ties454.cleaningAgents.infra.Manager.Listener;
 
 public class GUI extends JFrame implements Listener {
 

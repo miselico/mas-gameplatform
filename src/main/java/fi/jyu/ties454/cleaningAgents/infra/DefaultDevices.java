@@ -1,17 +1,17 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import fi.jyu.ties454.assignment3.actuators.BackwardMover;
-import fi.jyu.ties454.assignment3.actuators.Cleaner;
-import fi.jyu.ties454.assignment3.actuators.Dirtier;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.agent.GameAgent;
-import fi.jyu.ties454.assignment3.sensors.DirtSensor;
-import fi.jyu.ties454.assignment3.sensors.WallSensor;
+import fi.jyu.ties454.cleaningAgents.actuators.BackwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
+import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
+import fi.jyu.ties454.cleaningAgents.sensors.DirtSensor;
+import fi.jyu.ties454.cleaningAgents.sensors.WallSensor;
 import jade.core.Agent;
 
 /**

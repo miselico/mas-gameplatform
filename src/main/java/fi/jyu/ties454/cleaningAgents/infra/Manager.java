@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
 
-import fi.jyu.ties454.assignment3.actuators.Cleaner;
-import fi.jyu.ties454.assignment3.actuators.Dirtier;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.agent.CleaningAgent;
-import fi.jyu.ties454.assignment3.agent.SoilingAgent;
-import fi.jyu.ties454.assignment3.infra.Floor.FloorUpdateListener;
+import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
+import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.infra.Floor.FloorUpdateListener;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;

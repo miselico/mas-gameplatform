@@ -1,8 +1,8 @@
-package fi.jyu.ties454.assignment3.infra;
+package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.util.LinkedList;
 
-import fi.jyu.ties454.assignment3.agent.GameAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 
 class AgentState {
 

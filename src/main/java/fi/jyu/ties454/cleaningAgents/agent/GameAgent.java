@@ -1,16 +1,16 @@
-package fi.jyu.ties454.assignment3.agent;
+package fi.jyu.ties454.cleaningAgents.agent;
 
 import java.util.UUID;
 
-import fi.jyu.ties454.assignment3.actuators.BackwardMover;
-import fi.jyu.ties454.assignment3.actuators.Cleaner;
-import fi.jyu.ties454.assignment3.actuators.Dirtier;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.infra.Device;
-import fi.jyu.ties454.assignment3.infra.Manager;
-import fi.jyu.ties454.assignment3.sensors.DirtSensor;
-import fi.jyu.ties454.assignment3.sensors.WallSensor;
+import fi.jyu.ties454.cleaningAgents.actuators.BackwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
+import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.infra.Device;
+import fi.jyu.ties454.cleaningAgents.infra.Manager;
+import fi.jyu.ties454.cleaningAgents.sensors.DirtSensor;
+import fi.jyu.ties454.cleaningAgents.sensors.WallSensor;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;

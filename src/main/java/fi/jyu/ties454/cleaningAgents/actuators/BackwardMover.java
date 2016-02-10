@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.actuators;
+package fi.jyu.ties454.cleaningAgents.actuators;
 
 public interface BackwardMover {
 	/**

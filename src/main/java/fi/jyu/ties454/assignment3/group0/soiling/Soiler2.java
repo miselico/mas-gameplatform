@@ -1,10 +1,10 @@
 package fi.jyu.ties454.assignment3.group0.soiling;
 
-import fi.jyu.ties454.assignment3.actuators.Dirtier;
-import fi.jyu.ties454.assignment3.actuators.ForwardMover;
-import fi.jyu.ties454.assignment3.actuators.Rotator;
-import fi.jyu.ties454.assignment3.agent.SoilingAgent;
-import fi.jyu.ties454.assignment3.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
+import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
+import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class Soiler2 extends SoilingAgent {
