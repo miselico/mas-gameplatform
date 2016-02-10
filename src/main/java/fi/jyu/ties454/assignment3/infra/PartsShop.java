@@ -2,6 +2,7 @@ package fi.jyu.ties454.assignment3.infra;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -32,7 +33,7 @@ public class PartsShop {
 					Class<? extends Device> deviceClass = (Class<? extends Device>) class1;
 					Constructor<? extends Device> cons;
 					try {
-						cons = deviceClass.getDeclaredConstructor(Floor.class, AgentState.class);
+						cons = deviceClass.getDeclaredConstructor(Floor.class, AgentState.class, List.class);
 					} catch (NoSuchMethodException | SecurityException e) {
 						throw new Error(
 								"A class annotated with AvailableDevice must have a Floor,AgentState constructor", e);
@@ -56,10 +57,10 @@ public class PartsShop {
 		return this.parts.get(part).price;
 	}
 
-	public void attachPart(String device, Floor map, AgentState state) {
+	public void attachPart(String device, Floor map, AgentState state, List<AgentState> others) {
 		Part part = this.parts.get(device);
 		try {
-			Device d = part.constructor.newInstance(map, state);
+			Device d = part.constructor.newInstance(map, state, others);
 			// double dispatch
 			d.attach(state.agent);
 

@@ -1,10 +1,14 @@
 package fi.jyu.ties454.assignment3.infra;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
 
@@ -18,9 +22,11 @@ import fi.jyu.ties454.assignment3.infra.Floor.FloorUpdateListener;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentContainer;
+import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 public class Manager extends Agent {
@@ -43,6 +49,14 @@ public class Manager extends Agent {
 				Map<String, AgentState> soilers, Floor map) {
 			this.processUpdates(cleanersBudget, soilersBudget, cleaners, soilers, map);
 		}
+
+		/**
+		 * Indicates that the game ended. The final score is the average dirty
+		 * area on the map, measures once per second.
+		 *
+		 * @param score
+		 */
+		void gameEnded(double score);
 	}
 
 	private final LinkedList<Listener> listeners = new LinkedList<>();
@@ -56,6 +70,7 @@ public class Manager extends Agent {
 	private static final long serialVersionUID = 1L;
 	public static final int initialBudget = 10000;
 	public static final AID AID = new AID("Manager", false);
+	private final int gameLength;
 	private final AtomicInteger cleanersBudget = new AtomicInteger(Manager.initialBudget);
 	private final AtomicInteger soilersBudget = new AtomicInteger(Manager.initialBudget);
 	private final Map<String, AgentState> cleaners = new HashMap<>();
@@ -63,12 +78,13 @@ public class Manager extends Agent {
 	private final Floor map;
 	private final PartsShop partsShop;
 
-	public Manager(int cleaningGroup, int soilingGroup, Floor map, PartsShop partsShop, Random rand) throws Exception {
+	public Manager(List<CleaningAgent> cleaners, List<SoilingAgent> soilers, Floor map, PartsShop partsShop,
+			Random rand, int gameLength) throws Exception {
 		this.map = map;
 		this.partsShop = partsShop;
+		this.gameLength = gameLength;
 		System.out.println("Starting game with the following map:");
 		System.out.println(map.toString());
-		System.out.println("Adding the following cleaners:");
 
 		AgentState.Listener l = new AgentState.Listener() {
 
@@ -88,31 +104,36 @@ public class Manager extends Agent {
 			}
 		});
 
-		for (int i = 1; i <= 3; i++) {
-			String cleaningAgentClass = "fi.jyu.ties454.assignment3.group" + cleaningGroup + ".cleaning.Agent" + i;
-			CleaningAgent agent = (CleaningAgent) Class.forName(cleaningAgentClass).newInstance();
-			AgentState state = new AgentState(agent, map.getRandomLocation(rand), Orientation.random(rand));
+		System.out.println("Adding the following cleaners:");
+		Location cleanersStartLocation = map.getRandomLocation(rand);
+		Orientation cleanersStartOrientation = Orientation.random(rand);
+		for (int i = 0; i < cleaners.size(); i++) {
+			CleaningAgent agent = cleaners.get(i);
+			AgentState state = new AgentState(agent, cleanersStartLocation, cleanersStartOrientation);
 			state.addListener(l);
-			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state);
-			Rotator r = new DefaultDevices.BasicRotator(map, state);
-			Cleaner c = new DefaultDevices.BasicCleaner(map, state);
+			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state, null);
+			Rotator r = new DefaultDevices.BasicRotator(map, state, null);
+			Cleaner c = new DefaultDevices.BasicCleaner(map, state, null);
 			agent.install(m, r, c);
-
-			this.cleaners.put(cleaningAgentClass, state);
-			System.out.println(cleaningAgentClass);
+			String agentName = "Cleaner" + (i + 1);
+			this.cleaners.put(agentName, state);
+			System.out.println(agentName + " at " + cleanersStartLocation + " oriented " + cleanersStartOrientation
+					+ " class " + agent.getClass().getName());
 		}
 		System.out.println("And the following soilers:");
-		for (int i = 1; i <= 3; i++) {
-			String soilingAgentClass = "fi.jyu.ties454.assignment3.group" + cleaningGroup + ".soiling.Agent" + i;
-			SoilingAgent agent = (SoilingAgent) Class.forName(soilingAgentClass).newInstance();
-			AgentState state = new AgentState(agent, map.getRandomLocation(rand), Orientation.random(rand));
+		for (int i = 0; i < soilers.size(); i++) {
+			SoilingAgent agent = soilers.get(i);
+			Location loc = map.getRandomLocation(rand);
+			Orientation o = Orientation.random(rand);
+			AgentState state = new AgentState(agent, loc, o);
 			state.addListener(l);
-			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state);
-			Rotator r = new DefaultDevices.BasicRotator(map, state);
-			Dirtier c = new DefaultDevices.BasicDirtier(map, state);
+			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state, null);
+			Rotator r = new DefaultDevices.BasicRotator(map, state, null);
+			Dirtier c = new DefaultDevices.BasicDirtier(map, state, null);
 			agent.install(m, r, c);
-			this.soilers.put(soilingAgentClass, state);
-			System.out.println(soilingAgentClass);
+			String agentName = "Soiler" + (i + 1);
+			this.soilers.put(agentName, state);
+			System.out.println(agentName + " at " + loc + " oriented " + o + " class " + agent.getClass().getName());
 		}
 		System.out.println("Following devices are available in the partsShop");
 		System.out.println(this.partsShop);
@@ -124,12 +145,48 @@ public class Manager extends Agent {
 	protected void setup() {
 		AgentContainer ac = this.getContainerController();
 		try {
-			for (AgentState state : Iterables.concat(this.cleaners.values(), this.soilers.values())) {
-				ac.acceptNewAgent(state.agent.getClass().getName(), state.agent).start();
+			for (Entry<String, AgentState> agentDescription : Iterables.concat(this.cleaners.entrySet(),
+					this.soilers.entrySet())) {
+				ac.acceptNewAgent(agentDescription.getKey(), agentDescription.getValue().agent).start();
 			}
 		} catch (StaleProxyException e) {
 			throw new Error(e);
 		}
+
+		this.addBehaviour(new TickerBehaviour(this, 1000) {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				super.setFixedPeriod(true);
+			}
+
+			List<Double> fractions = new ArrayList<>(Manager.this.gameLength);
+
+			@Override
+			protected void onTick() {
+				if (this.getTickCount() < Manager.this.gameLength) {
+					this.fractions.add(Manager.this.map.dirtyFraction());
+				} else {
+					this.stop();
+				}
+
+			}
+
+			@Override
+			public int onEnd() {
+				System.out.println("The game is over.");
+				Double averageDirtyness = this.fractions.stream().collect(Collectors.averagingDouble(d -> d));
+				System.out.println("Average dirtyness was : " + averageDirtyness);
+				try {
+					ac.getPlatformController().kill();
+					Manager.this.listeners.forEach(l -> l.gameEnded(averageDirtyness));
+				} catch (ControllerException e) {
+					throw new Error(e);
+				}
+				return super.onEnd();
+			}
+		});
 
 		this.addBehaviour(new CyclicBehaviour() {
 
@@ -153,9 +210,10 @@ public class Manager extends Agent {
 						int price = Manager.this.partsShop.getPrice(deviceName);
 						AtomicInteger budget;
 						AgentState state;
-						if ((state = Manager.this.cleaners.get(msg.getSender().getLocalName())) != null) {
+						String sender = msg.getSender().getLocalName();
+						if ((state = Manager.this.cleaners.get(sender)) != null) {
 							budget = Manager.this.cleanersBudget;
-						} else if ((state = Manager.this.soilers.get(msg.getSender().getLocalName())) != null) {
+						} else if ((state = Manager.this.soilers.get(sender)) != null) {
 							budget = Manager.this.soilersBudget;
 						} else {
 							performative = ACLMessage.FAILURE;
@@ -168,7 +226,12 @@ public class Manager extends Agent {
 						}
 						if (budget.addAndGet(-price) > 0) {
 							// successfull
-							Manager.this.partsShop.attachPart(deviceName, Manager.this.map, state);
+							List<AgentState> others = new LinkedList<>();
+							Manager.this.cleaners.entrySet().stream().filter(e -> !e.getKey().equals(sender))
+									.map(e -> e.getValue()).forEach(others::add);
+							Manager.this.soilers.entrySet().stream().filter(e -> !e.getKey().equals(sender))
+									.map(e -> e.getValue()).forEach(others::add);
+							Manager.this.partsShop.attachPart(deviceName, Manager.this.map, state, others);
 							Manager.this.listeners.forEach(li -> li.budgetUpdate(Manager.this.cleanersBudget.get(),
 									Manager.this.soilersBudget.get(), Manager.this.cleaners, Manager.this.soilers,
 									Manager.this.map));

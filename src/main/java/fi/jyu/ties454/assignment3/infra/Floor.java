@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -93,8 +94,19 @@ public class Floor {
 		return this.map.get(l.Y, l.X);
 	}
 
-	public boolean isDirty(Location l) {
+	synchronized public boolean isDirty(Location l) {
+		Preconditions.checkArgument(this.isValidLocation(l));
 		return this.state(l) == FloorState.DIRTY;
+	}
+
+	/**
+	 * What fraction of the floor surface is dirty?
+	 */
+	public synchronized double dirtyFraction() {
+		double dirty = (double) this.map.values().stream().filter(c -> c == FloorState.DIRTY)
+				.collect(Collectors.counting());
+		double size = this.map.size();
+		return dirty / size;
 	}
 
 	public static Floor createSimple() {
@@ -145,7 +157,7 @@ public class Floor {
 		}
 	}
 
-	static Floor readFromReader(Reader r0) throws IOException {
+	public static Floor readFromReader(Reader r0) throws IOException {
 		Floor e = new Floor();
 		String line;
 		int y = 0;

@@ -1,24 +1,41 @@
 package fi.jyu.ties454.assignment3.group0.cleaning;
 
-import fi.jyu.ties454.assignment3.actuators.BackwardMover;
+import java.util.Random;
+
 import fi.jyu.ties454.assignment3.actuators.Cleaner;
 import fi.jyu.ties454.assignment3.actuators.ForwardMover;
 import fi.jyu.ties454.assignment3.actuators.Rotator;
 import fi.jyu.ties454.assignment3.agent.CleaningAgent;
-import fi.jyu.ties454.assignment3.infra.DefaultDevices;
+import jade.core.behaviours.OneShotBehaviour;
 
-public class Agent1 extends CleaningAgent {
+public class Cleaner3 extends CleaningAgent {
 
 	private static final long serialVersionUID = 1L;
+
 	private ForwardMover f;
 	private Rotator r;
 	private Cleaner c;
-	private BackwardMover backw;
 
 	@Override
 	protected void setup() {
-		System.out.println(this.getClass().getName() + "Moving to the wall");
-		this.getDevice(DefaultDevices.BasicBackwardMover.class);
+		this.addBehaviour(new OneShotBehaviour() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void action() {
+				Random rand = new Random();
+				// no money -> use free stuff
+				while (true) {
+					Cleaner3.this.f.move();
+					Cleaner3.this.c.clean();
+					if (rand.nextInt(5) == 0) {
+						Cleaner3.this.r.rotateCW();
+					}
+				}
+			}
+
+		});
 	}
 
 	@Override
@@ -26,11 +43,5 @@ public class Agent1 extends CleaningAgent {
 		this.f = f;
 		this.r = r;
 		this.c = c;
-	}
-
-	@Override
-	public void update(BackwardMover f) {
-		System.out.println("backwardMover received");
-		this.backw = f;
 	}
 }

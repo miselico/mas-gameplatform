@@ -3,7 +3,7 @@ package fi.jyu.ties454.assignment3.sensors;
 public interface WallSensor {
 	/**
 	 * Is there a wall right in front of the agent?
-	 * 
+	 *
 	 * @return
 	 */
 	public default boolean wallInfront() {

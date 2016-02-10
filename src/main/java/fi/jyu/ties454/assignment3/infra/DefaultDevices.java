@@ -1,5 +1,6 @@
 package fi.jyu.ties454.assignment3.infra;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -11,6 +12,7 @@ import fi.jyu.ties454.assignment3.actuators.Rotator;
 import fi.jyu.ties454.assignment3.agent.GameAgent;
 import fi.jyu.ties454.assignment3.sensors.DirtSensor;
 import fi.jyu.ties454.assignment3.sensors.WallSensor;
+import jade.core.Agent;
 
 /**
  * Class containing the actual implementation of actuators
@@ -31,7 +33,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = areaCleanerCost)
 	public static class AreaCleaner extends Device implements Cleaner {
 
-		AreaCleaner(Floor map, AgentState state) {
+		AreaCleaner(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -41,9 +43,58 @@ public class DefaultDevices {
 		}
 
 		@Override
-		public void clean() {
+		public boolean clean() {
 			DefaultDevices.sleep(DefaultDevices.areaCleanTime);
-			this.map.clean(this.state.getLocation());
+			Location agentLocation = this.state.getLocation();
+			boolean dirtFound = false;
+			for (int x = agentLocation.X - 2; x <= (agentLocation.X + 2); x++) {
+				for (int y = agentLocation.Y - 2; y <= (agentLocation.Y + 2); y++) {
+					Location cleanLocation = new Location(x, y);
+					if (this.map.isValidLocation(cleanLocation)) {
+						dirtFound = this.map.isDirty(cleanLocation) || dirtFound;
+						this.map.clean(cleanLocation);
+					}
+				}
+			}
+			return dirtFound;
+		}
+
+	}
+
+	/**
+	 * Soils the area under the robot and one cell in each direction (altogether
+	 * 9 cells). Can be used 20 times.
+	 *
+	 * @author michael
+	 *
+	 */
+	@Device.AvailableDevice(cost = areaDirtierCost)
+	public static class AreaDirtier extends Device implements Dirtier {
+
+		private static final int maxUse = 20;
+		private int uses = 0;
+
+		AreaDirtier(Floor map, AgentState state, List<AgentState> others) {
+			super(map, state);
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
+		}
+
+		@Override
+		public void makeMess() {
+			if (!this.isEmpty()) {
+				DefaultDevices.sleep(DefaultDevices.areDirtierTime);
+				this.map.soil(this.state.getLocation());
+				this.uses++;
+			}
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return this.uses == AreaDirtier.maxUse;
 		}
 
 	}
@@ -67,7 +118,7 @@ public class DefaultDevices {
 	 */
 	@Device.AvailableDevice(cost = basicBackwardMovercost)
 	public static class BasicBackwardMover extends BackwardMoverImpl {
-		BasicBackwardMover(Floor floor, AgentState state) {
+		BasicBackwardMover(Floor floor, AgentState state, List<AgentState> others) {
 			super(floor, state, 1);
 		}
 
@@ -87,7 +138,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicCleanerCost)
 	public static class BasicCleaner extends Device implements Cleaner {
 
-		BasicCleaner(Floor map, AgentState state) {
+		BasicCleaner(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -97,15 +148,17 @@ public class DefaultDevices {
 		}
 
 		@Override
-		public void clean() {
+		public boolean clean() {
 			DefaultDevices.sleep(DefaultDevices.basicCleanTime);
+			boolean wasDirty = this.map.isDirty(this.state.getLocation());
 			this.map.clean(this.state.getLocation());
+			return wasDirty;
 		}
 
 	}
 
 	/**
-	 * Soils the area under the robot. Can be used 20 times.
+	 * Soils the area under the robot.
 	 *
 	 * @author michael
 	 *
@@ -113,10 +166,10 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicDirtierCost)
 	public static class BasicDirtier extends Device implements Dirtier {
 
-		private static final int maxUse = 20;
-		private int uses = 0;
+		// private static final int maxUse = 20;
+		// private int uses = 0;
 
-		BasicDirtier(Floor map, AgentState state) {
+		BasicDirtier(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -130,13 +183,14 @@ public class DefaultDevices {
 			if (!this.isEmpty()) {
 				DefaultDevices.sleep(DefaultDevices.basicDirtierTime);
 				this.map.soil(this.state.getLocation());
-				this.uses++;
+				// this.uses++;
 			}
 		}
 
 		@Override
 		public boolean isEmpty() {
-			return this.uses == BasicDirtier.maxUse;
+			// return this.uses == BasicDirtier.maxUse;
+			return false;
 		}
 
 	}
@@ -149,7 +203,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicDirtSensorCost)
 	public static class BasicDirtSensor extends Device implements DirtSensor {
 
-		BasicDirtSensor(Floor map, AgentState state) {
+		BasicDirtSensor(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -179,7 +233,7 @@ public class DefaultDevices {
 	 */
 	@Device.AvailableDevice(cost = basicForwardMoverCost)
 	public static class BasicForwardMover extends ForwardMoverImpl {
-		BasicForwardMover(Floor floor, AgentState state) {
+		BasicForwardMover(Floor floor, AgentState state, List<AgentState> others) {
 			super(floor, state, 1);
 		}
 
@@ -199,7 +253,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicRotatorCost)
 	public static class BasicRotator extends Device implements Rotator {
 
-		BasicRotator(Floor map, AgentState state) {
+		BasicRotator(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -231,7 +285,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicWallSensorCost)
 	public static class BasicWallSensor extends WallSensorImpl implements WallSensor {
 
-		BasicWallSensor(Floor map, AgentState state) {
+		BasicWallSensor(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state, basicWallSensorDepth);
 		}
 
@@ -254,7 +308,7 @@ public class DefaultDevices {
 
 		boolean used = false;
 
-		DirtExplosion(Floor map, AgentState state) {
+		DirtExplosion(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -314,7 +368,7 @@ public class DefaultDevices {
 	 */
 	@Device.AvailableDevice(cost = frogForwardMoverCost)
 	public static class FrogHopperForwardMover extends ForwardMoverImpl {
-		FrogHopperForwardMover(Floor floor, AgentState state) {
+		FrogHopperForwardMover(Floor floor, AgentState state, List<AgentState> others) {
 			super(floor, state, 1000);
 		}
 
@@ -336,7 +390,7 @@ public class DefaultDevices {
 
 		private final Random r;
 
-		HighProbabilisticDirtSensor(Floor map, AgentState state) {
+		HighProbabilisticDirtSensor(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 			this.r = new Random();
 		}
@@ -372,7 +426,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = jackieChanRotatorCost)
 	public static class JackieChanRotator extends Device implements Rotator {
 
-		JackieChanRotator(Floor map, AgentState state) {
+		JackieChanRotator(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -403,7 +457,7 @@ public class DefaultDevices {
 	 */
 	@Device.AvailableDevice(cost = jumpForwardMoverCost)
 	public static class JumpForwardMover extends ForwardMoverImpl {
-		JumpForwardMover(Floor floor, AgentState state) {
+		JumpForwardMover(Floor floor, AgentState state, List<AgentState> others) {
 			super(floor, state, 5);
 		}
 
@@ -429,7 +483,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = laserDirtSensorCost)
 	public static class LaserDirtSensor extends Device implements DirtSensor {
 
-		LaserDirtSensor(Floor map, AgentState state) {
+		LaserDirtSensor(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -472,7 +526,7 @@ public class DefaultDevices {
 	@Device.AvailableDevice(cost = basicSidewaysMoverCost)
 	static abstract class LeftMover extends Device implements ForwardMover {
 
-		LeftMover(Floor map, AgentState state) {
+		LeftMover(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 		}
 
@@ -501,7 +555,7 @@ public class DefaultDevices {
 
 		private final Random r;
 
-		LowProbabilisticDirtSensor(Floor map, AgentState state) {
+		LowProbabilisticDirtSensor(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
 			this.r = new Random();
 		}
@@ -602,7 +656,7 @@ public class DefaultDevices {
 	private static final int middle = costFactor * 15;
 	private static final int expensive = costFactor * 30;
 
-	private static final int slooow = timeFactor * 100;
+	private static final int slooow = timeFactor * 50;
 	private static final int slow = timeFactor * 25;
 	private static final int normalSpeed = timeFactor * 10;
 	private static final int fast = timeFactor * 5;
@@ -610,6 +664,9 @@ public class DefaultDevices {
 
 	private static final int areaCleanerCost = expensive;
 	private static final int areaCleanTime = normalSpeed;
+
+	private static final int areaDirtierCost = middle;
+	public static final long areDirtierTime = normalSpeed;
 
 	private static final int basicBackwardMovercost = cheap;
 
@@ -619,7 +676,7 @@ public class DefaultDevices {
 	private static final int basicDirtierCost = free;
 	private static final int basicDirtierTime = slooow;
 
-	private static final int basicDirtSenseTime = normalSpeed;
+	private static final int basicDirtSenseTime = fast;
 	private static final int basicDirtSensorCost = cheap;
 
 	private static final int basicForwardMoverCost = free;
@@ -661,7 +718,20 @@ public class DefaultDevices {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			throw new Error(e);
+			// Handling this exception is hard.
+			// There are two reasons why it can be thrown
+			// 1. the platform is shutting down.
+			// 2. cheating - another thread is started which interrupts the
+			// agent thread.
+			// Cheating is ignored since starting a new thread is not allowed
+			// anyway.
+			// * If ignored, the agent will not stop.
+			// * If an Error or other RuntimeException is thrown, it is reported
+			// as an error.
+			// We hijack the Agent.Interrupted exception as a middleway.
+			// The agent stops, not reported as an error, semantically pretty
+			// close.
+			throw new Agent.Interrupted();
 		}
 	}
 }

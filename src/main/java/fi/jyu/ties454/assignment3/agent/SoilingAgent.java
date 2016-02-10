@@ -7,6 +7,6 @@ import fi.jyu.ties454.assignment3.actuators.Rotator;
 public abstract class SoilingAgent extends GameAgent {
 	private static final long serialVersionUID = 1L;
 
-	public abstract void install(ForwardMover f, Rotator r, Dirtier c);
+	public abstract void install(ForwardMover forward, Rotator rotator, Dirtier dirtier);
 
 }

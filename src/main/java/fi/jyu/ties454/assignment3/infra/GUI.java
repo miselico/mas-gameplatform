@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -17,8 +18,8 @@ public class GUI extends JFrame implements Listener {
 	private final JTextArea output;
 
 	public GUI() {
-		this.output = new JTextArea(30, 50);
-		this.output.setFont(new Font("monospaced", Font.PLAIN, 20));
+		this.output = new JTextArea(25, 80);
+		this.output.setFont(new Font("monospaced", Font.PLAIN, 30));
 
 		this.output.setEditable(false);
 		this.add(new JScrollPane(this.output));
@@ -57,6 +58,22 @@ public class GUI extends JFrame implements Listener {
 	@Override
 	public void agentStateUpdate(int cleanersBudget, int soilersBudget, Map<String, AgentState> cleaners,
 			Map<String, AgentState> soilers, Floor map) {
-		System.out.println(soilers);
+
+	}
+
+	@Override
+	public void gameEnded(double score) {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(GUI.this,
+						String.format("Game Ended. Average percentage of dirt : %.2f", score * 100));
+				// this.setVisible(false);
+				// this.dispose();
+
+			}
+		});
+
 	}
 }
