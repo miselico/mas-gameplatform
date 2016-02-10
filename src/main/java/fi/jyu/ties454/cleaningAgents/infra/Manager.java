@@ -68,7 +68,7 @@ public class Manager extends Agent {
 
 	public static final String DEVICE_ACQUISITION_PROTOCOL = "device-acquisition-protocol";
 	private static final long serialVersionUID = 1L;
-	public static final int initialBudget = 10000;
+	public static final int initialBudget = 12000;
 	public static final AID AID = new AID("Manager", false);
 	private final int gameLength;
 	private final AtomicInteger cleanersBudget = new AtomicInteger(Manager.initialBudget);

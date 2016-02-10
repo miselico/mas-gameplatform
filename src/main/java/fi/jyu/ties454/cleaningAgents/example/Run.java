@@ -21,7 +21,7 @@ import fi.jyu.ties454.cleaningAgents.infra.Game;
 
 public class Run {
 	public static void main(String[] args) throws Exception {
-		InputStream is = Game.class.getResourceAsStream("/fi/jyu/ties454/assignment3/group0/map3.txt");
+		InputStream is = Run.class.getResourceAsStream("map3.txt");
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
 		List<CleaningAgent> cleaners = ImmutableList.of(new RichCleaner1(), new Cleaner2(), new PoorCleaner());
