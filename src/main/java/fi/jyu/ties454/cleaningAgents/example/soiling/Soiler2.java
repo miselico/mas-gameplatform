@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.group0.soiling;
+package fi.jyu.ties454.cleaningAgents.example.soiling;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
@@ -7,7 +7,7 @@ import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import jade.core.behaviours.OneShotBehaviour;
 
-public class Soiler1 extends SoilingAgent {
+public class Soiler2 extends SoilingAgent {
 
 	private static final long serialVersionUID = 1L;
 	private Dirtier d;
@@ -23,16 +23,16 @@ public class Soiler1 extends SoilingAgent {
 
 			@Override
 			public void action() {
-				if (Soiler1.this.getDevice(DefaultDevices.DirtExplosion.class)) {
-					Soiler1.this.dirtExplosion.makeMess();
+				if (Soiler2.this.getDevice(DefaultDevices.DirtExplosion.class)) {
+					Soiler2.this.dirtExplosion.makeMess();
 				}
-				if (Soiler1.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
-					Soiler1.this.jumper.move();
-					Soiler1.this.jumper.move();
+				if (Soiler2.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
+					Soiler2.this.jumper.move();
+					Soiler2.this.jumper.move();
 					while (true) {
-						Soiler1.this.rotator.rotateCW();
-						while (Soiler1.this.jumper.move() == 5) {
-							Soiler1.this.d.makeMess();
+						Soiler2.this.rotator.rotateCW();
+						while (Soiler2.this.jumper.move() == 5) {
+							Soiler2.this.d.makeMess();
 						}
 					}
 				}

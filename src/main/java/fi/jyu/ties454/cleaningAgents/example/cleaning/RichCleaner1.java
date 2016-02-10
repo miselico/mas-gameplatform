@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.group0.cleaning;
+package fi.jyu.ties454.cleaningAgents.example.cleaning;
 
 import java.util.Random;
 

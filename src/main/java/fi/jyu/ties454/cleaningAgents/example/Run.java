@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.group0;
+package fi.jyu.ties454.cleaningAgents.example;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,14 +8,14 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.jyu.ties454.assignment3.group0.cleaning.RichCleaner1;
-import fi.jyu.ties454.assignment3.group0.cleaning.Cleaner2;
-import fi.jyu.ties454.assignment3.group0.cleaning.PoorCleaner;
-import fi.jyu.ties454.assignment3.group0.soiling.Soiler1;
-import fi.jyu.ties454.assignment3.group0.soiling.Soiler2;
-import fi.jyu.ties454.assignment3.group0.soiling.Soiler3;
 import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
 import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.example.cleaning.Cleaner2;
+import fi.jyu.ties454.cleaningAgents.example.cleaning.PoorCleaner;
+import fi.jyu.ties454.cleaningAgents.example.cleaning.RichCleaner1;
+import fi.jyu.ties454.cleaningAgents.example.soiling.Soiler1;
+import fi.jyu.ties454.cleaningAgents.example.soiling.Soiler2;
+import fi.jyu.ties454.cleaningAgents.example.soiling.Soiler3;
 import fi.jyu.ties454.cleaningAgents.infra.Floor;
 import fi.jyu.ties454.cleaningAgents.infra.Game;
 

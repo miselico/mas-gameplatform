@@ -1,4 +1,4 @@
-package fi.jyu.ties454.assignment3.group0.soiling;
+package fi.jyu.ties454.cleaningAgents.example.soiling;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
