@@ -33,7 +33,7 @@ public class Run {
 
 		// The game needs a list of cleaners. For the first task only one
 		// cleaner is used.
-		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner2());
+		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner());
 
 		// Create a game with the map and the cleaners. There are also
 		// constructors which take more arguments. They will be used in later
