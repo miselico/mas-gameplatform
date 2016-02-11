@@ -532,7 +532,7 @@ public class DefaultDevices {
 	 *
 	 */
 	@Device.AvailableDevice(cost = basicSidewaysMoverCost)
-	static abstract class LeftMover extends Device implements ForwardMover {
+	public static class LeftMover extends Device implements ForwardMover {
 
 		LeftMover(Floor map, AgentState state, List<AgentState> others) {
 			super(map, state);
@@ -550,6 +550,11 @@ public class DefaultDevices {
 			}
 			this.state.setLocation(potentialNewLocation);
 			return 1;
+		}
+
+		@Override
+		public void attach(GameAgent agent) {
+			agent.update(this);
 		}
 	}
 
@@ -657,7 +662,7 @@ public class DefaultDevices {
 	}
 
 	private static final int timeFactor = 50;
-	private static final int costFactor = Manager.initialBudget / 100;
+	private static final int costFactor = Manager.initialBudget / 120;
 
 	private static final int free = 0;
 	private static final int cheap = costFactor * 5;
@@ -694,7 +699,7 @@ public class DefaultDevices {
 	private static final int basicRotatorCost = free;
 
 	private static final int basicSidewaysMoverCost = middle;
-	private static final int basicSideWaysMovetime = basicMoveTime;
+	private static final int basicSideWaysMovetime = fast;
 
 	private static final int basicWallSenseTime = fast;
 	private static final int basicWallSensorCost = middle;
