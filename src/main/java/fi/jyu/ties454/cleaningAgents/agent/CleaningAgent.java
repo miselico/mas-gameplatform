@@ -11,7 +11,7 @@ public abstract class CleaningAgent extends GameAgent {
 	 * Method called before the {@link CleaningAgent} is started. The agent has
 	 * to accept (and store) the parts to use them later. By default the system
 	 * will provide only very basic components.
-	 * 
+	 *
 	 * @param f
 	 *            A ForwardMover
 	 * @param r

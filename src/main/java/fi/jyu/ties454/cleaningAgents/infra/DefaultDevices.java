@@ -87,7 +87,7 @@ public class DefaultDevices {
 		public void makeMess() {
 			if (!this.isEmpty()) {
 				DefaultDevices.sleep(DefaultDevices.areDirtierTime);
-				Location agentLocation = this.state.getLocation();	
+				Location agentLocation = this.state.getLocation();
 				for (int x = agentLocation.X - 1; x <= (agentLocation.X + 1); x++) {
 					for (int y = agentLocation.Y - 1; y <= (agentLocation.Y + 1); y++) {
 						Location locationToBeSoiled = new Location(x, y);

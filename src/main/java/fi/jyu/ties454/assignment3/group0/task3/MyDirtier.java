@@ -2,11 +2,16 @@ package fi.jyu.ties454.assignment3.group0.task3;
 
 import java.util.Random;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.AreaDirtier;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.DirtExplosion;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JumpForwardMover;
 import jade.core.behaviours.OneShotBehaviour;
 
 /**
@@ -17,11 +22,7 @@ public class MyDirtier extends SoilingAgent {
 
 	private static final long serialVersionUID = 1L;
 	private Dirtier d;
-	private Dirtier dirtExplosion;
-	private ForwardMover jumper;
 	private Rotator rotator;
-	private Dirtier areaDirtier;
-	private boolean expectArea;
 	private ForwardMover f;
 
 	@Override
@@ -33,32 +34,33 @@ public class MyDirtier extends SoilingAgent {
 			@Override
 			public void action() {
 				Random r = new Random();
-				expectArea = true;
-				MyDirtier.this.getDevice(DefaultDevices.AreaDirtier.class);
-				expectArea = false;
-				if (MyDirtier.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
-					MyDirtier.this.jumper.move();
-					MyDirtier.this.jumper.move();
+				Optional<AreaDirtier> areaDirtier = MyDirtier.this.getDevice(DefaultDevices.AreaDirtier.class);
+				Optional<JumpForwardMover> jumper = MyDirtier.this.getDevice(DefaultDevices.JumpForwardMover.class);
+				if (jumper.isPresent()) {
+					jumper.get().move();
+					jumper.get().move();
 					while (true) {
 						MyDirtier.this.rotator.rotateCW();
-						while (MyDirtier.this.jumper.move() == 5) {
-							if (!MyDirtier.this.areaDirtier.isEmpty()) {
-								MyDirtier.this.areaDirtier.makeMess();
+						while (jumper.get().move() == 5) {
+							if (areaDirtier.isPresent() && !areaDirtier.get().isEmpty()) {
+								areaDirtier.get().makeMess();
 							} else {
 								// just normal mess
 								MyDirtier.this.d.makeMess();
 							}
 							if (r.nextInt(5) == 0) {
-								rotator.rotateCW();
+								MyDirtier.this.rotator.rotateCW();
 							}
 							if (r.nextInt(25) == 0) {
 								// attempt dirt explosion. This only works if
 								// there is money left.
-								if (MyDirtier.this.getDevice(DefaultDevices.DirtExplosion.class)) {
-									MyDirtier.this.dirtExplosion.makeMess();
+								Optional<DirtExplosion> dirtExplosion = MyDirtier.this
+										.getDevice(DefaultDevices.DirtExplosion.class);
+								if (dirtExplosion.isPresent()) {
+									dirtExplosion.get().makeMess();
 								}
 							}
-							if (r.nextInt(10) == 0){
+							if (r.nextInt(10) == 0) {
 								MyDirtier.this.f.move();
 							}
 						}
@@ -75,19 +77,4 @@ public class MyDirtier extends SoilingAgent {
 		this.d = c;
 		this.rotator = r;
 	}
-
-	@Override
-	public void update(Dirtier f) {
-		if (expectArea) {
-			this.areaDirtier = f;
-		} else {
-			this.dirtExplosion = f;
-		}
-	}
-
-	@Override
-	public void update(ForwardMover f) {
-		this.jumper = f;
-	}
-
 }

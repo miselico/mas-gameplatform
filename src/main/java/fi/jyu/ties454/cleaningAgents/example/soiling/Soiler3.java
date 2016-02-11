@@ -1,18 +1,20 @@
 package fi.jyu.ties454.cleaningAgents.example.soiling;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.DirtExplosion;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JumpForwardMover;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class Soiler3 extends SoilingAgent {
 
 	private static final long serialVersionUID = 1L;
 	private Dirtier d;
-	private Dirtier dirtExplosion;
-	private ForwardMover jumper;
 	private Rotator rotator;
 
 	@Override
@@ -23,15 +25,17 @@ public class Soiler3 extends SoilingAgent {
 
 			@Override
 			public void action() {
-				if (Soiler3.this.getDevice(DefaultDevices.DirtExplosion.class)) {
-					Soiler3.this.dirtExplosion.makeMess();
+				Optional<DirtExplosion> dirtExplosion = Soiler3.this.getDevice(DefaultDevices.DirtExplosion.class);
+				if (dirtExplosion.isPresent()) {
+					dirtExplosion.get().makeMess();
 				}
-				if (Soiler3.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
-					Soiler3.this.jumper.move();
-					Soiler3.this.jumper.move();
+				Optional<JumpForwardMover> jumper = Soiler3.this.getDevice(DefaultDevices.JumpForwardMover.class);
+				if (jumper.isPresent()) {
+					jumper.get().move();
+					jumper.get().move();
 					while (true) {
 						Soiler3.this.rotator.rotateCW();
-						while (Soiler3.this.jumper.move() == 5) {
+						while (jumper.get().move() == 5) {
 							Soiler3.this.d.makeMess();
 						}
 					}
@@ -47,13 +51,4 @@ public class Soiler3 extends SoilingAgent {
 		this.rotator = r;
 	}
 
-	@Override
-	public void update(Dirtier f) {
-		this.dirtExplosion = f;
-	}
-
-	@Override
-	public void update(ForwardMover f) {
-		this.jumper = f;
-	}
 }

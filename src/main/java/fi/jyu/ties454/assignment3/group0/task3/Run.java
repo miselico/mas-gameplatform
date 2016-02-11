@@ -14,7 +14,7 @@ import fi.jyu.ties454.cleaningAgents.infra.Game;
 
 /**
  * Class to start the simulation
- * 
+ *
  * @author michael
  *
  */

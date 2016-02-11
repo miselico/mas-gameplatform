@@ -2,11 +2,15 @@ package fi.jyu.ties454.cleaningAgents.example.cleaning;
 
 import java.util.Random;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.AreaCleaner;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JumpForwardMover;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class RichCleaner1 extends CleaningAgent {
@@ -15,8 +19,6 @@ public class RichCleaner1 extends CleaningAgent {
 	private ForwardMover f;
 	private Rotator r;
 	private Cleaner c;
-	private Cleaner areaCleaner;
-	private ForwardMover jumper;
 
 	@Override
 	protected void setup() {
@@ -27,11 +29,12 @@ public class RichCleaner1 extends CleaningAgent {
 			@Override
 			public void action() {
 				Random rand = new Random();
-				if (RichCleaner1.this.getDevice(DefaultDevices.AreaCleaner.class)
-						&& RichCleaner1.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
+				Optional<AreaCleaner> areaCleaner = RichCleaner1.this.getDevice(DefaultDevices.AreaCleaner.class);
+				Optional<JumpForwardMover> jumper = RichCleaner1.this.getDevice(DefaultDevices.JumpForwardMover.class);
+				if (areaCleaner.isPresent()	&& jumper.isPresent()) {
 					while (true) {
-						RichCleaner1.this.jumper.move();
-						RichCleaner1.this.areaCleaner.clean();
+						jumper.get().move();
+						areaCleaner.get().clean();
 						if (rand.nextInt(5) == 0) {
 							RichCleaner1.this.r.rotateCW();
 						}
@@ -55,16 +58,6 @@ public class RichCleaner1 extends CleaningAgent {
 		this.f = f;
 		this.r = r;
 		this.c = c;
-	}
-
-	@Override
-	public void update(Cleaner f) {
-		this.areaCleaner = f;
-	}
-
-	@Override
-	public void update(ForwardMover f) {
-		this.jumper = f;
 	}
 
 }

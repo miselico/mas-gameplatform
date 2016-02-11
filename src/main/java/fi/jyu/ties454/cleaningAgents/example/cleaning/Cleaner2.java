@@ -2,13 +2,15 @@ package fi.jyu.ties454.cleaningAgents.example.cleaning;
 
 import java.util.Random;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.BasicDirtSensor;
 import fi.jyu.ties454.cleaningAgents.infra.FloorState;
-import fi.jyu.ties454.cleaningAgents.sensors.DirtSensor;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class Cleaner2 extends CleaningAgent {
@@ -18,8 +20,6 @@ public class Cleaner2 extends CleaningAgent {
 	private ForwardMover f;
 	private Rotator r;
 	private Cleaner c;
-
-	private DirtSensor ds;
 
 	@Override
 	protected void setup() {
@@ -31,11 +31,11 @@ public class Cleaner2 extends CleaningAgent {
 			public void action() {
 				Random rand = new Random();
 				// no money -> use cheap stuff
-				Cleaner2.this.getDevice(DefaultDevices.BasicDirtSensor.class);
+				Optional<BasicDirtSensor> ds = Cleaner2.this.getDevice(DefaultDevices.BasicDirtSensor.class);
 				while (true) {
 					if (Cleaner2.this.f.move() > 0) {
 						// if there is a sensor, use it
-						if ((Cleaner2.this.ds == null) || (Cleaner2.this.ds.inspect() == FloorState.DIRTY)) {
+						if ((!ds.isPresent()) || ds.get().inspect() == FloorState.DIRTY) {
 							Cleaner2.this.c.clean();
 						}
 					}
@@ -49,11 +49,6 @@ public class Cleaner2 extends CleaningAgent {
 			}
 
 		});
-	}
-
-	@Override
-	public void update(DirtSensor f) {
-		this.ds = f;
 	}
 
 	@Override

@@ -1,10 +1,13 @@
 package fi.jyu.ties454.assignment3.group0.task3;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JackieChanRotator;
 import jade.core.behaviours.OneShotBehaviour;
 
 /**
@@ -14,19 +17,20 @@ import jade.core.behaviours.OneShotBehaviour;
 public class MyCleaner extends CleaningAgent {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private ForwardMover mover;
 	private Rotator rotator;
 	private Cleaner cleaner;
 
-	private Rotator fastRotator;
-
 	@Override
 	protected void setup() {
-		//it is safe to obtain parts in setup(), but using them must be done in behaviors!
-		//getting the device is don using the getDevice call.
-		//when this call returns true, the update method of the agent has been called
-		if (this.getDevice(DefaultDevices.JackieChanRotator.class)){
+		// it is safe to obtain parts in setup(), but using them must be done in
+		// behaviors!
+		// getting the device is don using the getDevice call.
+		// This call returns an Optional<E extends Device> which is present if
+		// the device was successfully obtained
+		Optional<JackieChanRotator> fastRotator = this.getDevice(DefaultDevices.JackieChanRotator.class);
+		if (fastRotator.isPresent()) {
 			System.out.println("Got the moves");
 		}
 		this.addBehaviour(new OneShotBehaviour() {
@@ -35,7 +39,8 @@ public class MyCleaner extends CleaningAgent {
 
 			@Override
 			public void action() {
-				// TODO implement using whatever toys you got, like the fastRotator
+				// TODO implement using whatever toys you got, like the
+				// fastRotator
 			}
 		});
 	}
@@ -48,10 +53,4 @@ public class MyCleaner extends CleaningAgent {
 
 	}
 
-	@Override
-	public void update(Rotator f) {
-		System.out.println("Received a rotator");
-		this.fastRotator = f;
-	}
-	
 }

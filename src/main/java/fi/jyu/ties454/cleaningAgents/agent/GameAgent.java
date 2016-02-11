@@ -2,15 +2,10 @@ package fi.jyu.ties454.cleaningAgents.agent;
 
 import java.util.UUID;
 
-import fi.jyu.ties454.cleaningAgents.actuators.BackwardMover;
-import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
-import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
-import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
-import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.infra.Device;
 import fi.jyu.ties454.cleaningAgents.infra.Manager;
-import fi.jyu.ties454.cleaningAgents.sensors.DirtSensor;
-import fi.jyu.ties454.cleaningAgents.sensors.WallSensor;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -19,26 +14,13 @@ public class GameAgent extends Agent {
 
 	private static final long serialVersionUID = 1L;
 
-	public void update(ForwardMover f) {
-	};
+	public static class NoSuchDeviceException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 
-	public void update(BackwardMover f) {
-	};
-
-	public void update(Dirtier f) {
-	};
-
-	public void update(Rotator f) {
-	};
-
-	public void update(DirtSensor f) {
-	};
-
-	public void update(WallSensor f) {
-	};
-
-	public void update(Cleaner f) {
-	};
+		public <E extends Device> NoSuchDeviceException(Class<E> deviceClass) {
+			super("There is no device of class " + deviceClass.getName() + " available");
+		}
+	}
 
 	/**
 	 * Sends a request to get the device specified by deviceClass.
@@ -46,14 +28,34 @@ public class GameAgent extends Agent {
 	 * @param deviceClass
 	 * @return
 	 */
-	public boolean getDevice(Class<? extends Device> deviceClass) {
-		ACLMessage m = new ACLMessage(ACLMessage.REQUEST);
-		m.addReceiver(Manager.AID);
-		m.setProtocol(Manager.DEVICE_ACQUISITION_PROTOCOL);
-		m.setContent(deviceClass.getName());
-		m.setReplyWith(UUID.randomUUID().toString());
-		this.send(m);
-		ACLMessage response = this.blockingReceive(MessageTemplate.MatchInReplyTo(m.getReplyWith()));
-		return response.getPerformative() == ACLMessage.AGREE;
+	public <E extends Device> Optional<E> getDevice(Class<E> deviceClass) {
+		try {
+			ACLMessage m = new ACLMessage(ACLMessage.REQUEST);
+			m.addReceiver(Manager.AID);
+			m.setProtocol(Manager.DEVICE_ACQUISITION_PROTOCOL);
+			m.setContent(deviceClass.getName());
+			m.setReplyWith(UUID.randomUUID().toString());
+			this.send(m);
+			ACLMessage response = this.blockingReceive(MessageTemplate.MatchInReplyTo(m.getReplyWith()));
+			if (response.getPerformative() == ACLMessage.AGREE) {
+				E theCurrentDevice = deviceClass.cast(this.currentDevice);
+				return Optional.of(theCurrentDevice);
+			} else if (response.getPerformative() == ACLMessage.REFUSE) {
+				return Optional.absent();
+			} else if (response.getPerformative() == ACLMessage.FAILURE) {
+				throw new NoSuchDeviceException(deviceClass);
+			} else {
+				throw new Error(Manager.AID.getLocalName() + " send message with unknown performative");
+			}
+		} finally {
+			this.currentDevice = null;
+		}
 	}
+
+	private Device currentDevice = null;
+
+	public final void update(Device d) {
+
+	}
+
 }

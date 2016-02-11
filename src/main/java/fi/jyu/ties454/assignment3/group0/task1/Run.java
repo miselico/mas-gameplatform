@@ -13,7 +13,7 @@ import fi.jyu.ties454.cleaningAgents.infra.Game;
 
 /**
  * Class to start the simulation
- * 
+ *
  * @author michael
  *
  */
@@ -31,13 +31,17 @@ public class Run {
 		}
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
-		// The game needs a list of cleaners. For the first task only one cleaner is used.
+		// The game needs a list of cleaners. For the first task only one
+		// cleaner is used.
 		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner());
-		
-		//Create a game with the map and the cleaners. There are also constructors which take more arguments. They will be used in later exercises.
+
+		// Create a game with the map and the cleaners. There are also
+		// constructors which take more arguments. They will be used in later
+		// exercises.
 		Game g = new Game(map, cleaners);
-		//Start the game. This will also show the a 'graphical' representation of the state of the rooms.
-		//The agent will start on a random location on the map.
+		// Start the game. This will also show the a 'graphical' representation
+		// of the state of the rooms.
+		// The agent will start on a random location on the map.
 		g.start();
 	}
 }

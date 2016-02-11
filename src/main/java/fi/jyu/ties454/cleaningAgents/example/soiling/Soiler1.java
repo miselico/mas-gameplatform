@@ -1,18 +1,20 @@
 package fi.jyu.ties454.cleaningAgents.example.soiling;
 
+import com.google.common.base.Optional;
+
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
 import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.DirtExplosion;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JumpForwardMover;
 import jade.core.behaviours.OneShotBehaviour;
 
 public class Soiler1 extends SoilingAgent {
 
 	private static final long serialVersionUID = 1L;
 	private Dirtier d;
-	private Dirtier dirtExplosion;
-	private ForwardMover jumper;
 	private Rotator rotator;
 
 	@Override
@@ -23,15 +25,17 @@ public class Soiler1 extends SoilingAgent {
 
 			@Override
 			public void action() {
-				if (Soiler1.this.getDevice(DefaultDevices.DirtExplosion.class)) {
-					Soiler1.this.dirtExplosion.makeMess();
+				Optional<DirtExplosion> dirtExplosion = Soiler1.this.getDevice(DefaultDevices.DirtExplosion.class);
+				if (dirtExplosion.isPresent()) {
+					dirtExplosion.get().makeMess();
 				}
-				if (Soiler1.this.getDevice(DefaultDevices.JumpForwardMover.class)) {
-					Soiler1.this.jumper.move();
-					Soiler1.this.jumper.move();
+				Optional<JumpForwardMover> jumper = Soiler1.this.getDevice(DefaultDevices.JumpForwardMover.class);
+				if (jumper.isPresent()) {
+					jumper.get().move();
+					jumper.get().move();
 					while (true) {
 						Soiler1.this.rotator.rotateCW();
-						while (Soiler1.this.jumper.move() == 5) {
+						while (jumper.get().move() == 5) {
 							Soiler1.this.d.makeMess();
 						}
 					}
@@ -45,15 +49,5 @@ public class Soiler1 extends SoilingAgent {
 	public void install(ForwardMover f, Rotator r, Dirtier c) {
 		this.d = c;
 		this.rotator = r;
-	}
-
-	@Override
-	public void update(Dirtier f) {
-		this.dirtExplosion = f;
-	}
-
-	@Override
-	public void update(ForwardMover f) {
-		this.jumper = f;
 	}
 }

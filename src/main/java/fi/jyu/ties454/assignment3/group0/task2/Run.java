@@ -14,13 +14,13 @@ import fi.jyu.ties454.cleaningAgents.infra.Game;
 
 /**
  * Class to start the simulation
- * 
+ *
  * @author michael
  *
  */
 public class Run {
 	public static void main(String[] args) throws Exception {
-		//now a clean map is loaded
+		// now a clean map is loaded
 		InputStream is = Run.class.getResourceAsStream("rectangleRoomClean.txt");
 		if (is == null) {
 			System.err.println("Did you copy the resource folder as instructed?");
@@ -29,14 +29,16 @@ public class Run {
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
 		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner());
-		//more friends to play with
+		// more friends to play with
 		List<SoilingAgent> dirtiers = ImmutableList.of(new MyDirtier());
-		
-		
-		//Create a game with the map and the cleaners. There are also constructors which take more arguments. They will be used in later exercises.
+
+		// Create a game with the map and the cleaners. There are also
+		// constructors which take more arguments. They will be used in later
+		// exercises.
 		Game g = new Game(map, cleaners, dirtiers);
-		//Start the game. This will also show the a 'graphical' representation of the state of the rooms.
-		//The agent will start on a random location on the map.
+		// Start the game. This will also show the a 'graphical' representation
+		// of the state of the rooms.
+		// The agent will start on a random location on the map.
 		g.start();
 	}
 }
