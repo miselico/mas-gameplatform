@@ -38,6 +38,9 @@ public class GameAgent extends Agent {
 			this.send(m);
 			ACLMessage response = this.blockingReceive(MessageTemplate.MatchInReplyTo(m.getReplyWith()));
 			if (response.getPerformative() == ACLMessage.AGREE) {
+				if (this.currentDevice == null){
+					throw new Error("Manager informaed that device was delivered, but nothing received.");
+				}
 				E theCurrentDevice = deviceClass.cast(this.currentDevice);
 				return Optional.of(theCurrentDevice);
 			} else if (response.getPerformative() == ACLMessage.REFUSE) {
@@ -55,7 +58,7 @@ public class GameAgent extends Agent {
 	private Device currentDevice = null;
 
 	public final void update(Device d) {
-
+		this.currentDevice = d;
 	}
 
 }
