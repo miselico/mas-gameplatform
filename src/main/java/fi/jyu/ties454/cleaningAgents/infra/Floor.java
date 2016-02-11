@@ -13,6 +13,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -207,4 +208,35 @@ public class Floor {
 		return w.toString();
 	}
 
+	public List<String> writeToStringList(){
+		List<String> l = new ArrayList<>();
+		int y = 0;
+		// traversal is in order (treebased)
+		for (Entry<Integer, Map<Integer, FloorState>> row : this.map.rowMap().entrySet()) {
+			while (y != row.getKey()) {
+				l.add("");
+				y++;
+			}
+			StringBuilder line = new StringBuilder();
+			int x = 0;
+			for (Entry<Integer, FloorState> column : row.getValue().entrySet()) {
+				while (column.getKey() != x) {
+					line.append(Floor.VOIDCHAR);
+					x++;
+				}
+				if (column.getValue() == FloorState.CLEAN) {
+					line.append(Floor.CLEANCHAR);
+				} else if (column.getValue() == FloorState.DIRTY) {
+					line.append(Floor.DIRTYCHAR);
+				} else {
+					throw new Error();
+				}
+				x++;
+			}
+			l.add(line.toString());
+			y++;
+		}
+		return l;
+	}
+	
 }
