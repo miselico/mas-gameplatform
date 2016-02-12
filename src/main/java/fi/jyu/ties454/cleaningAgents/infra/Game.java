@@ -80,6 +80,9 @@ public class Game {
 	public void start() throws Exception {
 		Properties pp = new Properties();
 		pp.setProperty(Profile.GUI, Boolean.TRUE.toString());
+		pp.setProperty(Profile.NO_MTP, Boolean.TRUE.toString());
+		pp.setProperty(Profile.SERVICES, "jade.core.event.NotificationService");
+
 		Profile p = new ProfileImpl(pp);
 		AgentContainer ac = jade.core.Runtime.instance().createMainContainer(p);
 		Manager manager = new Manager(this.cleaners, this.soilers, this.map, this.ps, this.r, this.gameLength);
