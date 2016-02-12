@@ -124,7 +124,7 @@ public class Floor {
 	private static final char DIRTYCHAR = '#';
 	private static final char VOIDCHAR = ' ';
 
-	void writeToWriter(Writer r) throws IOException {
+	synchronized void writeToWriter(Writer r) throws IOException {
 		int y = 0;
 		// traversal is in order (treebased)
 		for (Entry<Integer, Map<Integer, FloorState>> row : this.map.rowMap().entrySet()) {
@@ -198,7 +198,7 @@ public class Floor {
 	}
 
 	@Override
-	public String toString() {
+	public synchronized String toString() {
 		StringWriter w = new StringWriter();
 		try {
 			this.writeToWriter(w);
@@ -208,7 +208,7 @@ public class Floor {
 		return w.toString();
 	}
 
-	public List<String> writeToStringList(){
+	public synchronized List<String> writeToStringList(){
 		List<String> l = new ArrayList<>();
 		int y = 0;
 		// traversal is in order (treebased)
