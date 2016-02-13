@@ -417,7 +417,7 @@ public class DefaultDevices {
 		public FloorState inspect() {
 			DefaultDevices.sleep(DefaultDevices.highProbDirtSenseTime);
 			FloorState realState = this.map.state(this.state.getLocation());
-			if ((realState == FloorState.CLEAN) && (this.r.nextInt(20) == 0)) {
+			if ((realState == FloorState.CLEAN) && (this.r.nextInt(5) == 0)) {
 				return FloorState.DIRTY;
 			}
 			return realState;
@@ -673,6 +673,7 @@ public class DefaultDevices {
 	private static final int slow = timeFactor * 25;
 	private static final int normalSpeed = timeFactor * 10;
 	private static final int fast = timeFactor * 5;
+	private static final int faster = timeFactor * 1;
 	private static final int instant = 0;
 
 	private static final int areaCleanerCost = expensive;
@@ -690,7 +691,7 @@ public class DefaultDevices {
 	private static final int basicDirtierTime = slooow;
 
 	private static final int basicDirtSenseTime = fast;
-	private static final int basicDirtSensorCost = cheap;
+	private static final int basicDirtSensorCost = free;
 
 	private static final int basicForwardMoverCost = free;
 	private static final int basicMoveTime = slow;
@@ -711,8 +712,8 @@ public class DefaultDevices {
 	private static final int frogForwardMoverCost = expensive;
 	private static final int frogMoveTime = instant;
 
-	private static final int highProbDirtSenseTime = instant;
-	private static final int highProbDirtSensorCost = expensive;
+	private static final int highProbDirtSenseTime = faster;
+	private static final int highProbDirtSensorCost = middle;
 
 	private static final int jackieChanRotateTime = instant;
 	private static final int jackieChanRotatorCost = middle;
@@ -724,8 +725,8 @@ public class DefaultDevices {
 	private static final int laserDirtSenseTime = instant;
 	private static final int laserDirtSensorCost = expensive;
 
-	private static final int lowProbDirtSenseTime = fast;
-	private static final int lowProbDirtSensorCost = middle;
+	private static final int lowProbDirtSenseTime = faster;
+	private static final int lowProbDirtSensorCost = cheap;
 
 	private static void sleep(long millis) {
 		try {
