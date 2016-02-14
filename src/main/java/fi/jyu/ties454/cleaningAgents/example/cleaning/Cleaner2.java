@@ -1,8 +1,7 @@
 package fi.jyu.ties454.cleaningAgents.example.cleaning;
 
+import java.util.Optional;
 import java.util.Random;
-
-import com.google.common.base.Optional;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;

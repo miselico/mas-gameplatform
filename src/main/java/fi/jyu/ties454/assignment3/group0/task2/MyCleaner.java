@@ -1,6 +1,6 @@
 package fi.jyu.ties454.assignment3.group0.task2;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;

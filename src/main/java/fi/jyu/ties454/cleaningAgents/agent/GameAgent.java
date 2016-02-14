@@ -1,8 +1,7 @@
 package fi.jyu.ties454.cleaningAgents.agent;
 
+import java.util.Optional;
 import java.util.UUID;
-
-import com.google.common.base.Optional;
 
 import fi.jyu.ties454.cleaningAgents.infra.Device;
 import fi.jyu.ties454.cleaningAgents.infra.Manager;
@@ -44,7 +43,7 @@ public class GameAgent extends Agent {
 				E theCurrentDevice = deviceClass.cast(this.currentDevice);
 				return Optional.of(theCurrentDevice);
 			} else if (response.getPerformative() == ACLMessage.REFUSE) {
-				return Optional.absent();
+				return Optional.empty();
 			} else if (response.getPerformative() == ACLMessage.FAILURE) {
 				throw new NoSuchDeviceException(deviceClass);
 			} else {

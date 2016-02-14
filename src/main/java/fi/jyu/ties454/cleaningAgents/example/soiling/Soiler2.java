@@ -1,6 +1,6 @@
 package fi.jyu.ties454.cleaningAgents.example.soiling;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
