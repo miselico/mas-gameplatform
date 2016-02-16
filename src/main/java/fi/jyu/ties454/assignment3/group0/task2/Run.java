@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.Floor;
 import fi.jyu.ties454.cleaningAgents.infra.Game;
 
@@ -28,9 +27,9 @@ public class Run {
 		}
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
-		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner());
+		List<GameAgent> cleaners = ImmutableList.of(new MyCleaner());
 		// more friends to play with
-		List<SoilingAgent> dirtiers = ImmutableList.of(new MyDirtier());
+		List<GameAgent> dirtiers = ImmutableList.of(new MyDirtier());
 
 		// Create a game with the map and the cleaners. There are also
 		// constructors which take more arguments. They will be used in later

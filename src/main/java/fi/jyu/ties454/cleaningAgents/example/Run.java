@@ -8,8 +8,7 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.example.cleaning.Cleaner2;
 import fi.jyu.ties454.cleaningAgents.example.cleaning.PoorCleaner;
 import fi.jyu.ties454.cleaningAgents.example.cleaning.RichCleaner1;
@@ -24,8 +23,8 @@ public class Run {
 		InputStream is = Run.class.getResourceAsStream("map3.txt");
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
-		List<CleaningAgent> cleaners = ImmutableList.of(new RichCleaner1(), new Cleaner2(), new PoorCleaner());
-		List<SoilingAgent> soilers = ImmutableList.of(new Soiler1(), new Soiler2(), new Soiler3());
+		List<GameAgent> cleaners = ImmutableList.of(new RichCleaner1(), new Cleaner2(), new PoorCleaner());
+		List<GameAgent> soilers = ImmutableList.of(new Soiler1(), new Soiler2(), new Soiler3());
 
 		// Random r = new Random(467545L);
 		Random r = new Random(78978L);

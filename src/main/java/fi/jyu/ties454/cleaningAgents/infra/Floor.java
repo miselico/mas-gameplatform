@@ -104,8 +104,7 @@ public class Floor {
 	 * What fraction of the floor surface is dirty?
 	 */
 	public synchronized double dirtyFraction() {
-		double dirty = (double) this.map.values().stream().filter(c -> c == FloorState.DIRTY)
-				.collect(Collectors.counting());
+		double dirty = (double) this.map.values().stream().filter(c -> c == FloorState.DIRTY).collect(Collectors.counting());
 		double size = this.map.size();
 		return dirty / size;
 	}
@@ -208,7 +207,7 @@ public class Floor {
 		return w.toString();
 	}
 
-	public synchronized List<String> writeToStringList(){
+	public synchronized List<String> writeToStringList() {
 		List<String> l = new ArrayList<>();
 		int y = 0;
 		// traversal is in order (treebased)
@@ -238,5 +237,5 @@ public class Floor {
 		}
 		return l;
 	}
-	
+
 }

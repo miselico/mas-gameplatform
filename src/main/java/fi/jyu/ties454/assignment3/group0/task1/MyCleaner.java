@@ -3,14 +3,15 @@ package fi.jyu.ties454.assignment3.group0.task1;
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import jade.core.behaviours.OneShotBehaviour;
 
 /**
  * The agent extends from CleaningAgent, which is actually a normal JADE agent.
  * As an extra it has methods to obtain sensors and actuators.
  */
-public class MyCleaner extends CleaningAgent {
+public class MyCleaner extends GameAgent {
 
 	private static final long serialVersionUID = 1L;
 	/*
@@ -34,6 +35,11 @@ public class MyCleaner extends CleaningAgent {
 
 	@Override
 	protected void setup() {
+
+		this.mover = this.getDevice(DefaultDevices.BasicForwardMover.class).get();
+		this.rotator = this.getDevice(DefaultDevices.BasicRotator.class).get();
+		this.cleaner = this.getDevice(DefaultDevices.BasicCleaner.class).get();
+
 		this.addBehaviour(new OneShotBehaviour() {
 
 			private static final long serialVersionUID = 1L;
@@ -43,14 +49,6 @@ public class MyCleaner extends CleaningAgent {
 				// TODO implement using the mover, rotator, and cleaner.
 			}
 		});
-	}
-
-	@Override
-	public void install(ForwardMover f, Rotator r, Cleaner c) {
-		this.mover = f;
-		this.rotator = r;
-		this.cleaner = c;
-
 	}
 
 }

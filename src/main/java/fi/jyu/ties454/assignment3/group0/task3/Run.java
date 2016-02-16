@@ -7,8 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.Floor;
 import fi.jyu.ties454.cleaningAgents.infra.Game;
 
@@ -31,10 +30,10 @@ public class Run {
 		// currently starts 5 agents based on the same class. This is likely not
 		// what you want. You can make 5 different classes and specialize as you
 		// want.
-		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner(), new MyCleaner(), new MyCleaner(),
-				new MyCleaner(), new MyCleaner());
+		List<GameAgent> cleaners = ImmutableList.of(new MyCleaner(), new MyCleaner(), new MyCleaner(), new MyCleaner(),
+				new MyCleaner());
 		// more friends to play with
-		List<SoilingAgent> dirtiers = ImmutableList.of(new MyDirtier(), new MyDirtier());
+		List<GameAgent> dirtiers = ImmutableList.of(new MyDirtier(), new MyDirtier());
 
 		// Create a game with the map and the cleaners. There are also
 		// constructors which take more arguments. They will be used in later

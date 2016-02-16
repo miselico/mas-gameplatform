@@ -6,22 +6,27 @@ import java.util.Random;
 import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
 import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.BasicDirtSensor;
 import fi.jyu.ties454.cleaningAgents.infra.FloorState;
 import jade.core.behaviours.OneShotBehaviour;
 
-public class Cleaner2 extends CleaningAgent {
+public class Cleaner2 extends GameAgent {
 
 	private static final long serialVersionUID = 1L;
 
-	private ForwardMover f;
-	private Rotator r;
-	private Cleaner c;
+	private ForwardMover mover;
+	private Rotator rotator;
+	private Cleaner cleaner;
 
 	@Override
 	protected void setup() {
+
+		this.mover = this.getDevice(DefaultDevices.BasicForwardMover.class).get();
+		this.rotator = this.getDevice(DefaultDevices.BasicRotator.class).get();
+		this.cleaner = this.getDevice(DefaultDevices.BasicCleaner.class).get();
+
 		this.addBehaviour(new OneShotBehaviour() {
 
 			private static final long serialVersionUID = 1L;
@@ -32,28 +37,21 @@ public class Cleaner2 extends CleaningAgent {
 				// no money -> use cheap stuff
 				Optional<BasicDirtSensor> ds = Cleaner2.this.getDevice(DefaultDevices.BasicDirtSensor.class);
 				while (true) {
-					if (Cleaner2.this.f.move() > 0) {
+					if (Cleaner2.this.mover.move() > 0) {
 						// if there is a sensor, use it
-						if ((!ds.isPresent()) || ds.get().inspect() == FloorState.DIRTY) {
-							Cleaner2.this.c.clean();
+						if ((!ds.isPresent()) || (ds.get().inspect() == FloorState.DIRTY)) {
+							Cleaner2.this.cleaner.clean();
 						}
 					}
 					int prob = rand.nextInt(10);
 					if (prob == 0) {
-						Cleaner2.this.r.rotateCW();
+						Cleaner2.this.rotator.rotateCW();
 					} else if (prob == 1) {
-						Cleaner2.this.r.rotateCCW();
+						Cleaner2.this.rotator.rotateCCW();
 					}
 				}
 			}
 
 		});
-	}
-
-	@Override
-	public void install(ForwardMover f, Rotator r, Cleaner c) {
-		this.f = f;
-		this.r = r;
-		this.c = c;
 	}
 }

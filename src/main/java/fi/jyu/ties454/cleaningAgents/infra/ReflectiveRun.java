@@ -11,8 +11,7 @@ import java.util.Random;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.leap.Properties;
@@ -52,17 +51,17 @@ public class ReflectiveRun {
 			partsShopClass = args[4];
 		}
 
-		List<CleaningAgent> cleaners = new ArrayList<>();
+		List<GameAgent> cleaners = new ArrayList<>();
 		for (int i = 1; i <= 3; i++) {
 			String cleaningAgentClass = "fi.jyu.ties454.assignment3.group" + cleaningGroup + ".cleaning.Agent" + i;
-			CleaningAgent agent = (CleaningAgent) Class.forName(cleaningAgentClass).newInstance();
+			GameAgent agent = (GameAgent) Class.forName(cleaningAgentClass).newInstance();
 			cleaners.add(agent);
 		}
 
-		List<SoilingAgent> soilers = new ArrayList<>();
+		List<GameAgent> soilers = new ArrayList<>();
 		for (int i = 1; i <= 3; i++) {
 			String soilingAgentClass = "fi.jyu.ties454.assignment3.group" + soilingGroup + ".soiling.Agent" + i;
-			SoilingAgent agent = (SoilingAgent) Class.forName(soilingAgentClass).newInstance();
+			GameAgent agent = (GameAgent) Class.forName(soilingAgentClass).newInstance();
 			soilers.add(agent);
 		}
 

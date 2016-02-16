@@ -7,8 +7,7 @@ import java.util.Random;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.leap.Properties;
@@ -18,26 +17,26 @@ import jade.wrapper.StaleProxyException;
 public class Game {
 
 	private final Floor map;
-	private final List<CleaningAgent> cleaners;
-	private final List<SoilingAgent> soilers;
+	private final List<GameAgent> cleaners;
+	private final List<GameAgent> soilers;
 
 	private final Random r;
 	private final PartsShop ps;
 	private final int gameLength;
 
-	public Game(Floor map, List<CleaningAgent> cleaners) {
+	public Game(Floor map, List<GameAgent> cleaners) {
 		this(map, cleaners, Collections.emptyList());
 	}
 
-	public Game(Floor map, List<CleaningAgent> cleaners, List<SoilingAgent> soilers) {
+	public Game(Floor map, List<GameAgent> cleaners, List<GameAgent> soilers) {
 		this(map, cleaners, soilers, 150, new Random());
 	}
 
-	public Game(Floor map, List<CleaningAgent> cleaners, List<SoilingAgent> soilers, int gameLength, Random r) {
+	public Game(Floor map, List<GameAgent> cleaners, List<GameAgent> soilers, int gameLength, Random r) {
 		this(map, cleaners, soilers, gameLength, r, DefaultDevices.class);
 	}
 
-	public Game(Floor map, List<CleaningAgent> cleaners, List<SoilingAgent> soilers, int gameLength, Random r,
+	public Game(Floor map, List<GameAgent> cleaners, List<GameAgent> soilers, int gameLength, Random r,
 			Class<?> deviceClass) {
 		this(map, cleaners, soilers, gameLength, r, new PartsShop(deviceClass));
 	}
@@ -61,8 +60,7 @@ public class Game {
 	 *            The {@link PartsShop} which defines all possible additional
 	 *            parts the agents can aquire.
 	 */
-	public Game(Floor map, List<CleaningAgent> cleaners, List<SoilingAgent> soilers, int gameLength, Random r,
-			PartsShop ps) {
+	public Game(Floor map, List<GameAgent> cleaners, List<GameAgent> soilers, int gameLength, Random r, PartsShop ps) {
 		super();
 		this.map = map;
 		this.cleaners = cleaners;

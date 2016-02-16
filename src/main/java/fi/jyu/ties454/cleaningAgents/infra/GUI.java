@@ -43,8 +43,8 @@ public class GUI extends JFrame implements Listener {
 	public void floorUpdate(int cleanersBudget, int soilersBudget, Map<String, AgentState> cleaners,
 			Map<String, AgentState> soilers, Floor map) {
 
-		lines = map.writeToStringList();
-		String text = j.join(lines);
+		this.lines = map.writeToStringList();
+		String text = j.join(this.lines);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -52,9 +52,9 @@ public class GUI extends JFrame implements Listener {
 				GUI.this.output.setText(text);
 			}
 		});
-		//when the text is replaced, highlights seem gone!
-		
-		forceUpdateHighLights(cleaners, soilers);
+		// when the text is replaced, highlights seem gone!
+
+		this.forceUpdateHighLights(cleaners, soilers);
 	}
 
 	@Override
@@ -76,18 +76,18 @@ public class GUI extends JFrame implements Listener {
 	private final Map<String, Object> agentHighligths = new HashMap<>();
 
 	private final Map<String, Location> previousLocation = new HashMap<>();
-	
+
 	private void highlight(String agentName, Location l, DefaultHighlightPainter h) {
-		Location prev = previousLocation.get(agentName);
-		if (prev != null && prev.equals(l)){
+		Location prev = this.previousLocation.get(agentName);
+		if ((prev != null) && prev.equals(l)) {
 			return;
 		}
-		previousLocation.put(agentName, l);
-		
+		this.previousLocation.put(agentName, l);
+
 		int characterNumer = 0;
 		for (int i = 0; i < l.Y; i++) {
 			// skip line
-			characterNumer += lines.get(i).length() + 1; // characters + \n
+			characterNumer += this.lines.get(i).length() + 1; // characters + \n
 		}
 		characterNumer += l.X;
 
@@ -97,12 +97,12 @@ public class GUI extends JFrame implements Listener {
 			@Override
 			public void run() {
 				try {
-					Object highLight = agentHighligths.get(agentName);
+					Object highLight = GUI.this.agentHighligths.get(agentName);
 					if (highLight == null) {
-						agentHighligths.put(agentName,
-								output.getHighlighter().addHighlight(thecharachter, thecharachter + 1, h));
+						GUI.this.agentHighligths.put(agentName,
+								GUI.this.output.getHighlighter().addHighlight(thecharachter, thecharachter + 1, h));
 					} else {
-						output.getHighlighter().changeHighlight(highLight, thecharachter, thecharachter + 1);
+						GUI.this.output.getHighlighter().changeHighlight(highLight, thecharachter, thecharachter + 1);
 					}
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
@@ -115,10 +115,10 @@ public class GUI extends JFrame implements Listener {
 	}
 
 	private void forceUpdateHighLights(Map<String, AgentState> cleaners, Map<String, AgentState> soilers) {
-		previousLocation.clear();
-		updateHighLights(cleaners, soilers);
+		this.previousLocation.clear();
+		this.updateHighLights(cleaners, soilers);
 	}
-	
+
 	private void updateHighLights(Map<String, AgentState> cleaners, Map<String, AgentState> soilers) {
 		for (Entry<String, AgentState> agent : cleaners.entrySet()) {
 			this.highlight(agent.getKey(), agent.getValue().getLocation(), cleanerHighLighter);
@@ -128,11 +128,12 @@ public class GUI extends JFrame implements Listener {
 			this.highlight(agent.getKey(), agent.getValue().getLocation(), soilerHighLighter);
 		}
 	}
+
 	@Override
 	public void agentStateUpdate(int cleanersBudget, int soilersBudget, Map<String, AgentState> cleaners,
 			Map<String, AgentState> soilers, Floor map) {
 
-		updateHighLights(cleaners, soilers);
+		this.updateHighLights(cleaners, soilers);
 	}
 
 	@Override

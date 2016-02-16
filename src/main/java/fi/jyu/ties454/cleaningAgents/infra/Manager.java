@@ -12,12 +12,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
 
-import fi.jyu.ties454.cleaningAgents.actuators.Cleaner;
-import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
-import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
-import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.Floor.FloorUpdateListener;
 import jade.core.AID;
 import jade.core.Agent;
@@ -78,8 +73,8 @@ public class Manager extends Agent {
 	private final Floor map;
 	private final PartsShop partsShop;
 
-	public Manager(List<CleaningAgent> cleaners, List<SoilingAgent> soilers, Floor map, PartsShop partsShop,
-			Random rand, int gameLength) throws Exception {
+	public Manager(List<GameAgent> cleaners, List<GameAgent> soilers, Floor map, PartsShop partsShop, Random rand,
+			int gameLength) throws Exception {
 		this.map = map;
 		this.partsShop = partsShop;
 		this.gameLength = gameLength;
@@ -108,13 +103,9 @@ public class Manager extends Agent {
 		Location cleanersStartLocation = map.getRandomLocation(rand);
 		Orientation cleanersStartOrientation = Orientation.random(rand);
 		for (int i = 0; i < cleaners.size(); i++) {
-			CleaningAgent agent = cleaners.get(i);
+			GameAgent agent = cleaners.get(i);
 			AgentState state = new AgentState(agent, cleanersStartLocation, cleanersStartOrientation);
 			state.addListener(l);
-			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state, null);
-			Rotator r = new DefaultDevices.BasicRotator(map, state, null);
-			Cleaner c = new DefaultDevices.BasicCleaner(map, state, null);
-			agent.install(m, r, c);
 			String agentName = "Cleaner" + (i + 1);
 			this.cleaners.put(agentName, state);
 			System.out.println(agentName + " at " + cleanersStartLocation + " oriented " + cleanersStartOrientation
@@ -122,15 +113,11 @@ public class Manager extends Agent {
 		}
 		System.out.println("And the following soilers:");
 		for (int i = 0; i < soilers.size(); i++) {
-			SoilingAgent agent = soilers.get(i);
+			GameAgent agent = soilers.get(i);
 			Location loc = map.getRandomLocation(rand);
 			Orientation o = Orientation.random(rand);
 			AgentState state = new AgentState(agent, loc, o);
 			state.addListener(l);
-			ForwardMover m = new DefaultDevices.BasicForwardMover(map, state, null);
-			Rotator r = new DefaultDevices.BasicRotator(map, state, null);
-			Dirtier c = new DefaultDevices.BasicDirtier(map, state, null);
-			agent.install(m, r, c);
 			String agentName = "Soiler" + (i + 1);
 			this.soilers.put(agentName, state);
 			System.out.println(agentName + " at " + loc + " oriented " + o + " class " + agent.getClass().getName());

@@ -5,27 +5,29 @@ import java.util.Random;
 
 import fi.jyu.ties454.cleaningAgents.actuators.Dirtier;
 import fi.jyu.ties454.cleaningAgents.actuators.ForwardMover;
-import fi.jyu.ties454.cleaningAgents.actuators.Rotator;
-import fi.jyu.ties454.cleaningAgents.agent.SoilingAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.AreaDirtier;
+import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.BasicRotator;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.DirtExplosion;
 import fi.jyu.ties454.cleaningAgents.infra.DefaultDevices.JumpForwardMover;
 import jade.core.behaviours.OneShotBehaviour;
 
 /**
- * The agent extends from {@link SoilingAgent}, which is actually a normal JADE
+ * The agent extends from {@link GameAgent}, which is actually a normal JADE
  * agent. As an extra it has methods to obtain sensors and actuators.
  */
-public class MyDirtier extends SoilingAgent {
+public class MyDirtier extends GameAgent {
 
 	private static final long serialVersionUID = 1L;
-	private Dirtier d;
-	private Rotator rotator;
-	private ForwardMover f;
 
 	@Override
 	protected void setup() {
+
+		BasicRotator rotator = this.getDevice(DefaultDevices.BasicRotator.class).get();
+		Dirtier d = this.getDevice(DefaultDevices.BasicDirtier.class).get();
+		ForwardMover f = this.getDevice(DefaultDevices.BasicForwardMover.class).get();
+
 		this.addBehaviour(new OneShotBehaviour() {
 
 			private static final long serialVersionUID = 1L;
@@ -39,16 +41,16 @@ public class MyDirtier extends SoilingAgent {
 					jumper.get().move();
 					jumper.get().move();
 					while (true) {
-						MyDirtier.this.rotator.rotateCW();
+						rotator.rotateCW();
 						while (jumper.get().move() == 5) {
 							if (areaDirtier.isPresent() && !areaDirtier.get().isEmpty()) {
 								areaDirtier.get().makeMess();
 							} else {
 								// just normal mess
-								MyDirtier.this.d.makeMess();
+								d.makeMess();
 							}
 							if (r.nextInt(5) == 0) {
-								MyDirtier.this.rotator.rotateCW();
+								rotator.rotateCW();
 							}
 							if (r.nextInt(25) == 0) {
 								// attempt dirt explosion. This only works if
@@ -60,7 +62,7 @@ public class MyDirtier extends SoilingAgent {
 								}
 							}
 							if (r.nextInt(10) == 0) {
-								MyDirtier.this.f.move();
+								f.move();
 							}
 						}
 					}
@@ -70,10 +72,4 @@ public class MyDirtier extends SoilingAgent {
 
 	}
 
-	@Override
-	public void install(ForwardMover f, Rotator r, Dirtier c) {
-		this.f = f;
-		this.d = c;
-		this.rotator = r;
-	}
 }

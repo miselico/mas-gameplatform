@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.jyu.ties454.cleaningAgents.agent.CleaningAgent;
+import fi.jyu.ties454.cleaningAgents.agent.GameAgent;
 import fi.jyu.ties454.cleaningAgents.infra.Floor;
 import fi.jyu.ties454.cleaningAgents.infra.Game;
 
@@ -33,7 +33,7 @@ public class Run {
 
 		// The game needs a list of cleaners. For the first task only one
 		// cleaner is used.
-		List<CleaningAgent> cleaners = ImmutableList.of(new MyCleaner());
+		List<GameAgent> cleaners = ImmutableList.of(new MyCleaner());
 
 		// Create a game with the map and the cleaners. There are also
 		// constructors which take more arguments. They will be used in later
