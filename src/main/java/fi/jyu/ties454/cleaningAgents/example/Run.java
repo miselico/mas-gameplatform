@@ -24,6 +24,7 @@ public class Run {
 		Floor map = Floor.readFromReader(new InputStreamReader(is, StandardCharsets.US_ASCII));
 
 		List<GameAgent> cleaners = ImmutableList.of(new RichCleaner1(), new Cleaner2(), new PoorCleaner());
+		//List<GameAgent> cleaners = ImmutableList.of(new PoorCleaner());
 		List<GameAgent> soilers = ImmutableList.of(new Soiler1(), new Soiler2(), new Soiler3());
 
 		// Random r = new Random(467545L);

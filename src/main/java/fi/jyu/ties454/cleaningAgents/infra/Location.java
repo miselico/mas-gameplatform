@@ -9,19 +9,23 @@ public class Location {
 		this.Y = y;
 	}
 
-	public Location oneStep(Orientation o) {
+	public Location nStep(Orientation o, int n){
 		switch (o) {
 		case N:
-			return new Location(this.X, this.Y - 1);
+			return new Location(this.X, this.Y - n);
 		case E:
-			return new Location(this.X + 1, this.Y);
+			return new Location(this.X + n, this.Y);
 		case S:
-			return new Location(this.X, this.Y + 1);
+			return new Location(this.X, this.Y + n);
 		case W:
-			return new Location(this.X - 1, this.Y);
+			return new Location(this.X - n, this.Y);
 		default:
 			throw new Error();
-		}
+		}		
+	}
+	
+	public Location oneStep(Orientation o) {
+		return nStep(o, 1);
 	}
 
 	@Override
