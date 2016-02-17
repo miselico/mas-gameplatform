@@ -1,6 +1,11 @@
 package fi.jyu.ties454.cleaningAgents.infra;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
 	public final int X;
 	public final int Y;
 
