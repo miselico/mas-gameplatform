@@ -503,15 +503,15 @@ public class DefaultDevices {
 		@Override
 		public Optional<Boolean> dirtInFront() {
 			DefaultDevices.sleep(DefaultDevices.laserDirtInFrontSensorTime);
-			Location newLocation = this.state.getLocation();
+			Location startLocation = this.state.getLocation();
 			Orientation orientation = this.state.getOrientation();
 
-			while (this.map.isValidLocation(newLocation)) {
-				Location potentialNewLocation = newLocation.oneStep(orientation);
+			Location potentialNewLocation = startLocation.oneStep(orientation);
+			while (this.map.isValidLocation(potentialNewLocation)) {				
 				if (this.map.isDirty(potentialNewLocation)) {
 					return Optional.of(true);
 				}
-				newLocation = potentialNewLocation;
+				potentialNewLocation = potentialNewLocation.oneStep(orientation);
 			}
 			return Optional.of(false);
 		}

@@ -67,7 +67,7 @@ public class Tracker {
 			@Override
 			public int move() {
 				int distance = m.move();
-				l = l.nStep(o, distance);
+				l = l.nStep(o.ccw(), distance);
 				return distance;
 			}
 		};
@@ -85,7 +85,7 @@ public class Tracker {
 			@Override
 			public void rotateCCW() {
 				r.rotateCCW();
-
+				o = o.ccw();
 			}
 		};
 	}
