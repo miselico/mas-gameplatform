@@ -211,7 +211,7 @@ public class Manager extends Agent {
 							Manager.this.send(reply);
 							return;
 						}
-						if (budget.addAndGet(-price) > 0) {
+						if (budget.addAndGet(-price) >= 0) {
 							// successfull
 							List<AgentState> others = new LinkedList<>();
 							Manager.this.cleaners.entrySet().stream().filter(e -> !e.getKey().equals(sender))
