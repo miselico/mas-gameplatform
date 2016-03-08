@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import com.google.common.collect.TreeBasedTable;
 
@@ -49,9 +48,24 @@ public class Floor {
 	 * somewhat unexpected. The rows are X and the columns are Y!, This seems
 	 * opposite from what is used otherwise.
 	 */
-	private final Table<Integer, Integer, FloorState> map = TreeBasedTable.create();
+	private final TreeBasedTable<Integer, Integer, FloorState> map;
 
 	private Floor() {
+		this(TreeBasedTable.create());
+	}
+
+	private Floor(TreeBasedTable<Integer, Integer, FloorState> map) {
+		this.map = map;
+	}
+
+	/**
+	 * Copies the current map (but not any of the listeners attached to it)
+	 * 
+	 * @return A new map
+	 */
+	public synchronized Floor copyMap() {
+		TreeBasedTable<Integer, Integer, FloorState> mapCopy = TreeBasedTable.create(this.map);
+		return new Floor(mapCopy);
 	}
 
 	/**
@@ -104,7 +118,8 @@ public class Floor {
 	 * What fraction of the floor surface is dirty?
 	 */
 	public synchronized double dirtyFraction() {
-		double dirty = (double) this.map.values().stream().filter(c -> c == FloorState.DIRTY).collect(Collectors.counting());
+		double dirty = (double) this.map.values().stream().filter(c -> c == FloorState.DIRTY)
+				.collect(Collectors.counting());
 		double size = this.map.size();
 		return dirty / size;
 	}
