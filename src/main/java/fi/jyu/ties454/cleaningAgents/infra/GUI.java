@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -142,11 +143,12 @@ public class GUI extends JFrame implements Listener {
 
 			@Override
 			public void run() {
-				JOptionPane.showMessageDialog(GUI.this,
-						String.format("Game Ended. Average percentage of dirt : %.2f", score * 100));
-				// this.setVisible(false);
-				// this.dispose();
+				String message = String.format("Game Ended. Average percentage of dirt : %.2f", score * 100);
 
+				JOptionPane pane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
+				JDialog dialog = pane.createDialog(GUI.this, "Game ended");
+				dialog.setModal(false); 
+				dialog.setVisible(true);
 			}
 		});
 
