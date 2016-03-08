@@ -661,7 +661,7 @@ public class DefaultDevices {
 		}
 	}
 
-	private static final int timeFactor = 50;
+	private static final int timeFactor = 10;
 	private static final int costFactor = Manager.initialBudget / 120;
 
 	private static final int free = 0;
