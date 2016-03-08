@@ -26,6 +26,7 @@ public abstract class Fight {
 			for (int i = 0; i < REPEATS; i++) {
 				List<GameAgent> cleaners = getFreshCleaners();
 				List<GameAgent> dirters = getFreshDirtiers();
+				//it is essential to make a copy of the map. Otherwise state will leak to the next use.
 				Game g = new Game(map.copyMap(), cleaners, dirters, 15, new Random());
 				// Start the game. This will also show the a 'graphical'
 				// representation
@@ -38,10 +39,21 @@ public abstract class Fight {
 		return score;
 	}
 
+	/**
+	 * Creates a fresh squad of cleaners. They must be new instances not used before.
+	 * @return
+	 */
 	protected abstract List<GameAgent> getFreshCleaners();
 
+	/**
+	 * Creates a fresh squad of dirtiere. They must be new instances not used before.
+	 * @return
+	 */
 	protected abstract List<GameAgent> getFreshDirtiers();
 
+	/**
+	 * The resources of the maps which will be used
+	 */
 	private static final ImmutableList<String> mapResources = ImmutableList.of("cycles.txt", "map.txt",
 			"rectangleRoomLargeClean.txt", "rectangleRoomSmallClean.txt", "spiral.txt");
 
