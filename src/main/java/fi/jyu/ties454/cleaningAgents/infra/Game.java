@@ -2,7 +2,9 @@ package fi.jyu.ties454.cleaningAgents.infra;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -12,6 +14,8 @@ import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
+import jade.wrapper.PlatformController.Listener;
+import jade.wrapper.PlatformEvent;
 import jade.wrapper.StaleProxyException;
 
 public class Game {
@@ -77,7 +81,7 @@ public class Game {
 	 */
 	public void start() throws Exception {
 		Properties pp = new Properties();
-		pp.setProperty(Profile.GUI, Boolean.TRUE.toString());
+		//pp.setProperty(Profile.GUI, Boolean.TRUE.toString());
 		pp.setProperty(Profile.NO_MTP, Boolean.TRUE.toString());
 		pp.setProperty(Profile.SERVICES, "jade.core.event.NotificationService");
 
@@ -99,6 +103,62 @@ public class Game {
 			}
 		});
 		gui.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+		ac.addPlatformListener(new Listener() {
+
+			@Override
+			public void suspendedPlatform(PlatformEvent anEvent) {
+			}
+
+			@Override
+			public void startedPlatform(PlatformEvent anEvent) {
+			}
+
+			@Override
+			public void resumedPlatform(PlatformEvent anEvent) {
+			}
+
+			@Override
+			public void killedPlatform(PlatformEvent anEvent) {
+				gameEnd.countDown();
+			}
+
+			@Override
+			public void deadAgent(PlatformEvent anEvent) {
+			}
+
+			@Override
+			public void bornAgent(PlatformEvent anEvent) {
+			}
+		});
+		manager.addListener(new Manager.Listener() {
+
+			@Override
+			public void processUpdates(int cleanersBudget, int soilersBudget, Map<String, AgentState> cleaners,
+					Map<String, AgentState> soilers, Floor map) {
+				// do nothing
+			}
+
+			@Override
+			public void gameEnded(double score) {
+				finalScore = score;
+				gameEnd.countDown();
+			}
+		});
+	}
+
+	// this latch is used to sync the game with other threads waiting for the
+	// game to end.
+	// When 0, the game has ended and the final score of the game recorded in
+	// finalScore.
+	// One countdown is performed when the manager agent ends
+	// One countdown when the platform ends
+	private final CountDownLatch gameEnd = new CountDownLatch(2);
+	private double finalScore = Double.NaN;
+
+	public double awaitEnd() throws InterruptedException {
+		gameEnd.await();
+		return finalScore;
 	}
 
 }
