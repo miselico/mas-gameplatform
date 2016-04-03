@@ -26,7 +26,8 @@ public abstract class Fight {
 			for (int i = 0; i < REPEATS; i++) {
 				List<GameAgent> cleaners = getFreshCleaners();
 				List<GameAgent> dirters = getFreshDirtiers();
-				//it is essential to make a copy of the map. Otherwise state will leak to the next use.
+				// it is essential to make a copy of the map. Otherwise state
+				// will leak to the next use.
 				Game g = new Game(map.copyMap(), cleaners, dirters, 15, new Random());
 				// Start the game. This will also show the a 'graphical'
 				// representation
@@ -40,13 +41,17 @@ public abstract class Fight {
 	}
 
 	/**
-	 * Creates a fresh squad of cleaners. They must be new instances not used before.
+	 * Creates a fresh squad of cleaners. They must be new instances not used
+	 * before.
+	 * 
 	 * @return
 	 */
 	protected abstract List<GameAgent> getFreshCleaners();
 
 	/**
-	 * Creates a fresh squad of dirtiere. They must be new instances not used before.
+	 * Creates a fresh squad of dirtiere. They must be new instances not used
+	 * before.
+	 * 
 	 * @return
 	 */
 	protected abstract List<GameAgent> getFreshDirtiers();
@@ -117,5 +122,6 @@ public abstract class Fight {
 		System.out.println("FIGHT ENDED");
 		System.out.printf("accumulated score for team A. Cleaners: %f, Dirtiers: %f\n", cleanersScoreA, dirtiersScoreA);
 		System.out.printf("accumulated score for team B. Cleaners: %f, Dirtiers: %f\n", cleanersScoreB, dirtiersScoreB);
+		System.out.println("Lower scores are better.");
 	}
 }
