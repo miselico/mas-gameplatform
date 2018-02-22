@@ -42,7 +42,7 @@ In this final task you also have to create a team of dirt spreaders.
 
 These tasks are performed in team of 1 to 3 students. You have to use Java 8 for these tasks (Java 7 won't do).
 
-###Task 0 - Obtaining the project###
+### Task 0 - Obtaining the project ###
 
 The teacher has prepared a project in a git repository for each group. Inform the teacher to be assigned a group.
 Once assigned to a group, you can clone the project using `git clone git@yousource.it.jyu.fi:ties454-2016-assignment3/group<nr>.git`
@@ -59,7 +59,7 @@ The first skeleton can be found in `fi.jyu.ties454.assignment3.group<number>.tas
 
 Also make a copy of the resource folder `/src/main/resources/fi/jyu/ties454/assignment3/group0` to `/src/main/resources/fi/jyu/ties454/assignment3/group<groupnumber>`.
 
-###Task 1 - Cleaning the rectangle###
+### Task 1 - Cleaning the rectangle ###
 
 In this first task you have to write the code for a cleaning robot which has to clean a rectangular room.
 The skeleton for this task is already created. Carefully read the comments on the `fi.jyu.ties454.assignment3.group<nr>.task1.MyCleaner` class.
@@ -67,7 +67,7 @@ To start the simulation, you need to execute the `fi.jyu.ties454.assignment3.gro
 
 If the simulation runs to slow to your liking, read the hints below.
 
-###Task 2 - Advanced sensors and enemies###
+### Task 2 - Advanced sensors and enemies ###
 
 The actuators used up till now are a bit boring. The only things you could do were making one step, rotating, and cleaning.
 Obviously, cleaning gets more fun with better gear.
@@ -112,7 +112,7 @@ Your goal is to get that number down.
 (Don't spent too much time on this, there is no point trying to find the perfect solution.)
 
 
-###Task 3 - Coordinating multiple cleaners###
+### Task 3 - Coordinating multiple cleaners ###
 
 When multiple cleaners are started, they all start on the same location (still, this same location will be different each time you run).
 Multiple dirtiers, however, start each on a different location.
@@ -145,7 +145,7 @@ Note that the tracker class uses a coordinate system which is typical for comput
 
 As a map, you could use the `rectangleRoomLargeClean.txt` or create your own more complicated map.
 
-###Task 4 - Multiple rooms - competition###
+### Task 4 - Multiple rooms - competition ###
 
 Up till now there has only been one room to clean. This tasks adds the complexity that there can be multiple rooms.
 To make things easier, you only have to consider maps with rectangular rooms (always 4 corners), there are no doors at the corner points, and doors always consist of one cell.
